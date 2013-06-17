@@ -3840,6 +3840,14 @@ public final class Settings {
         /**
          * Action to perform when the app switch key is long-pressed. (Default is 0)
          * (See KEY_HOME_LONG_PRESS_ACTION for valid values)
+         * HALO, should default to 0 (no, do not show)
+         * HALO enabled, should default to 1 (yes, HALO is enabled)
+         * @hide
+         */
+        public static final String HALO_ENABLED = "halo_enabled";
+
+        /**
+         * HALO, should default to 0 (no, do not show)
          * @hide
          */
         public static final String KEY_APP_SWITCH_LONG_PRESS_ACTION = "key_app_switch_long_press_action";
