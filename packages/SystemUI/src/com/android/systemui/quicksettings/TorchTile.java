@@ -34,6 +34,9 @@ public class TorchTile extends QuickSettingsTile {
         mOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+		if (isFlipTilesEnabled()) {
+                    flipTile(0);
+                }
                 Intent i = new Intent(TorchConstants.ACTION_TOGGLE_STATE);
                 i.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
                 mContext.sendBroadcast(i);

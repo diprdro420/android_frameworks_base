@@ -36,6 +36,9 @@ public class ToggleLockscreenTile extends QuickSettingsTile implements
         mOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isFlipTilesEnabled()) {
+                    flipTile(0);
+                }
                 mLockscreenChanger.toggleState();
             }
         };
