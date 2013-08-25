@@ -69,6 +69,9 @@ public class MobileNetworkTypeTile extends QuickSettingsTile implements
         mOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isFlipTilesEnabled()) {
+                    flipTile(0);
+                }
                 int currentMode = getCurrentCMMode();
 
                 Intent intent = new Intent(ACTION_MODIFY_NETWORK_MODE);

@@ -3459,6 +3459,13 @@ public final class Settings {
         public static final String HALO_NOTIFY_SILENT = "halo_notify_silent";
 
         /**
+         * Animate-flip Quick Settings Panel Tiles on click
+         *
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_TILES_FLIP = "quick_settings_tiles_flip";
+
+        /**
          * Display style of the status bar battery information
          * 0: Display the battery an icon in portrait mode
          * 2: Display the battery as a circle
