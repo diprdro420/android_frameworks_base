@@ -3192,6 +3192,13 @@ public final class Settings {
         public static final String ANIMATION_CONTROLS_NO_OVERRIDE = "animation_controls_no_override";
 
         /**
+         * Animate-flip Quick Settings Panel Tiles on click
+         *
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_TILES_FLIP = "quick_settings_tiles_flip";
+
+        /**
          * Display style of the status bar battery information
          * 0: Display the battery an icon in portrait mode
          * 2: Display the battery as a circle

@@ -37,6 +37,9 @@ public class ExpandedDesktopTile extends QuickSettingsTile {
         mOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isFlipTilesEnabled()) {
+                    flipTile(0);
+                }
                 // Change the system setting
                 Settings.System.putIntForUser(mContext.getContentResolver(),
                         Settings.System.EXPANDED_DESKTOP_STATE, mEnabled ? 0 : 1,

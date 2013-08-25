@@ -47,6 +47,9 @@ public class ScreenTimeoutTile extends QuickSettingsTile {
         mOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isFlipTilesEnabled()) {
+                    flipTile(0);
+                }
                 toggleState();
                 updateResources();
             }
