@@ -604,6 +604,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             @Override
             public boolean onLongClick(View v) {
                 final NotificationData.Entry entry = (Entry) v.getTag();
+                if (entry.notification == null) return false;
                 final StatusBarNotification sbNotification = entry.notification;
                 final String packageNameF = sbNotification.getPackageName();
                 final PendingIntent contentIntent = sbNotification.getNotification().contentIntent;
