@@ -102,6 +102,8 @@ import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.cm.ActionUtils;
+import com.android.systemui.BatteryMeterView;
+import com.android.systemui.BatteryCircleMeterView;
 import com.android.systemui.DemoMode;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
@@ -343,6 +345,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     boolean mTransparentNav = false;
 
+    private BatteryMeterView mBattery;
+    private BatteryCircleMeterView mCircleBattery;
+
     // XXX: gesture research
     private final GestureRecorder mGestureRec = DEBUG_GESTURES
         ? new GestureRecorder("/sdcard/statusbar_gestures.dat")
@@ -416,6 +421,22 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_COLOR), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED), false, this,
+                    UserHandle.USER_ALL);
+
             updateSettings();
             updateClockLocation();
         }
@@ -450,6 +471,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.EXPANDED_DESKTOP_STATE, 0,
                 UserHandle.USER_CURRENT) == 1;
+    }
+
+    private void updateBatteryIcons() {
+        if (mBattery != null && mCircleBattery != null) {
+            mBattery.updateSettings();
+            mCircleBattery.updateSettings();
+        }
     }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
@@ -1001,6 +1029,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         } else {
             mNetworkController.setListener(this);
         }
+
+        mBattery = (BatteryMeterView) mStatusBarView.findViewById(R.id.battery);
+        mCircleBattery = (BatteryCircleMeterView) mStatusBarView.findViewById(R.id.circle_battery);
+        updateBatteryIcons();
 
         return mStatusBarView;
     }
@@ -3356,6 +3388,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mHeadsUpNotificationFSDecay = Settings.System.getInt(
                     resolver, Settings.System.HEADS_UP_FS_TIMEOUT, 700);
+        //Default to mWindowManagerService.hasNavigationBar()
+        boolean hasNav = true; // If below fails then better show the navbar
+        try {
+            hasNav = mWindowManagerService.hasNavigationBar();
+        }
+        catch (RemoteException ex) {
+            //OH NO!
+        }
+        mWantsNavigationBar = Settings.System.getBoolean(cr, Settings.System.ENABLE_NAVIGATION_BAR, hasNav);
+
+        updateBatteryIcons();
+    }
 
         updateCustomHeaderStatus();
     }

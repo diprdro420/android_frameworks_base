@@ -27,8 +27,20 @@ import java.util.ArrayList;
 public class BatteryController extends BroadcastReceiver {
 	private static final String TAG = "StatusBar.BatteryController";
 
+<<<<<<< HEAD
 	private ArrayList<BatteryStateChangeCallback> mChangeCallbacks =
 			new ArrayList<BatteryStateChangeCallback>();
+||||||| parent of fa713ab... fb: add Battery Styles the new way 1/2
+
+    private ArrayList<BatteryStateChangeCallback> mChangeCallbacks =
+            new ArrayList<BatteryStateChangeCallback>();
+=======
+    private int mLevel = 0;
+    private boolean mPluggedIn;
+
+    private ArrayList<BatteryStateChangeCallback> mChangeCallbacks =
+            new ArrayList<BatteryStateChangeCallback>();
+>>>>>>> fa713ab... fb: add Battery Styles the new way 1/2
 
     public interface BatteryStateChangeCallback {
         public void onBatteryLevelChanged(int level, boolean pluggedIn);
@@ -48,19 +60,31 @@ public class BatteryController extends BroadcastReceiver {
         mChangeCallbacks.remove(cb);
     }
 
+    public int getBatteryLevel() {
+        return mLevel;
+    }
+
+    public boolean isBatteryStatusCharging() {
+        return mPluggedIn;
+    }
+
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
-            final int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-			final int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
+            mLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+            final int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
                     BatteryManager.BATTERY_STATUS_UNKNOWN);
 
-            boolean plugged = false;
-			switch (status) {
-				case BatteryManager.BATTERY_STATUS_CHARGING:
-				case BatteryManager.BATTERY_STATUS_FULL:
-					plugged = true;
-					break;
+            mPluggedIn = false;
+            switch (status) {
+                case BatteryManager.BATTERY_STATUS_CHARGING:
+                case BatteryManager.BATTERY_STATUS_FULL:
+                    mPluggedIn = true;
+                    break;
+            }
+
+            for (BatteryStateChangeCallback cb : mChangeCallbacks) {
+                cb.onBatteryLevelChanged(mLevel, mPluggedIn);
             }
 			for (BatteryStateChangeCallback cb : mChangeCallbacks) {
 				cb.onBatteryLevelChanged(level, plugged);
