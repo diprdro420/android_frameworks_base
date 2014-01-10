@@ -51,6 +51,14 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Parcelable;
+import android.os.PowerManager;
+import android.os.RemoteException;
+import android.os.SystemClock;
+import android.os.SystemProperties;
+import android.os.Vibrator;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -346,6 +354,7 @@ public class KeyguardViewManager {
         public void setCustomBackground(Drawable d) {
             if (!isLaidOut()) return;
             if (!ActivityManager.isHighEndGfx() || !mScreenOn) {
+                mCustomBackground = d;
                 if (d == null) {
                     d = mUserBackground;
                 }
