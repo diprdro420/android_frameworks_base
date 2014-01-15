@@ -2776,6 +2776,12 @@ public final class Settings {
         public static final String LOCKSCREEN_MODLOCK_ENABLED = "lockscreen_modlock_enabled";
 
         /**
+         * Whether double-tap and hold on the lock glowpad starts the torch
+         * @hide
+         */
+        public static final String LOCKSCREEN_GLOWPAD_TORCH = "lockscreen_glowpad_torch";
+
+        /**
          * @deprecated Use {@link android.provider.Settings.Global#LOW_BATTERY_SOUND}
          * instead
          * @hide
