@@ -956,7 +956,7 @@ public class KeyguardViewManager {
             }
         }
 
-        if (mLockscreenNotifications) {
+        if (mLockscreenNotifications && mKeyguardView != null) {
             mNotificationViewManager.onScreenTurnedOn();
         }
     }
