@@ -213,8 +213,14 @@ public class NavigationBarView extends LinearLayout {
         public boolean onTouch(View view, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+<<<<<<< HEAD
                     // disable search gesture while interacting with application widget / camera
                     // button
+||||||| merged common ancestors
+                    // disable search gesture while interacting with camera
+=======
+                    // disable search gesture while interacting with additional navbar button
+>>>>>>> Add "show all notifications" navbar button
                     mDelegateHelper.setDisabled(true);
                     mBarTransitions.setContentVisible(false);
                     break;
@@ -230,6 +236,13 @@ public class NavigationBarView extends LinearLayout {
                 return KeyguardTouchDelegate.getInstance(getContext()).dispatchApplicationWidgetEvent(event);
             }
             return false;
+        }
+    };
+
+    private final OnClickListener mNavBarClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            KeyguardTouchDelegate.getInstance(getContext()).dispatchButtonClick(0);
         }
     };
 
@@ -426,6 +439,7 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView.findViewById(R.id.camera_button);
     }
 
+<<<<<<< HEAD
     // shown when keyguard is visible and application widget button is available
     public View getApplicationWidgetButton() {
         View v = mCurrentView.findViewById(R.id.application_widget_button);
@@ -469,6 +483,14 @@ public class NavigationBarView extends LinearLayout {
         return seq;
     }
 
+||||||| merged common ancestors
+=======
+    // used for lockscreen notifications
+    public View getNotifsButton() {
+        return mCurrentView.findViewById(R.id.show_notifs);
+    }
+
+>>>>>>> Add "show all notifications" navbar button
     private void getIcons(Resources res) {
         mBackIcon = res.getDrawable(R.drawable.ic_sysbar_back);
         mBackLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_land);
@@ -690,18 +712,24 @@ public class NavigationBarView extends LinearLayout {
         final boolean showSearch = disableHome && !disableSearch;
         final boolean showCamera = showSearch && !mCameraDisabledByDpm
                 && mLockUtils.getCameraEnabled();
+<<<<<<< HEAD
         // TODO(): Ideally we should integrate with DevicePolicyManager for application widget too.
         final boolean showApplicationWidget = showSearch &&
                 mApplicationWidgetPackageName != null && mLockUtils.getApplicationWidgetEnabled();
+||||||| merged common ancestors
+=======
+
+>>>>>>> Add "show all notifications" navbar button
         final boolean showNotifs = showSearch &&
-                Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.LOCKSCREEN_NOTIFICATIONS, 1) == 1 &&
-                Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.LOCKSCREEN_NOTIFICATIONS_PRIVACY_MODE, 0) == 0;
+            Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_NOTIFICATIONS, 1) == 1
+            && Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.LOCKSCREEN_NOTIFICATIONS_PRIVACY_MODE, 0) == 0;
 
         setVisibleOrGone(getSearchLight(), showSearch && mModLockDisabled
                 && NavigationRingHelpers.hasLockscreenTargets(mContext));
         setVisibleOrGone(getCameraButton(), showCamera);
+        setVisibleOrGone(getNotifsButton(), showNotifs);
 
         // Just hide view if neccessary - don't show it because that interferes with Keyguard
         // which uses setButtonDrawable to decide whether it should be shown
@@ -818,6 +846,7 @@ public class NavigationBarView extends LinearLayout {
             }
 
             final View cameraButton = mRotatedViews[i].findViewById(R.id.camera_button);
+            final View notifsButton = mRotatedViews[i].findViewById(R.id.show_notifs);
             final View searchLight = mRotatedViews[i].findViewById(R.id.search_light);
             final View applicationWidgetButton =
                     mRotatedViews[i].findViewById(R.id.application_widget_button);
@@ -825,6 +854,9 @@ public class NavigationBarView extends LinearLayout {
                 hasCamera = true;
                 cameraButton.setOnTouchListener(onTouchListener);
                 cameraButton.setOnClickListener(onClickListener);
+            }
+            if (notifsButton != null) {
+                notifsButton.setOnClickListener(mNavBarClickListener);
             }
             if (searchLight != null) {
                 searchLight.setOnClickListener(onClickListener);
