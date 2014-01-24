@@ -2190,9 +2190,6 @@
   <java-symbol type="string" name="second" />
   <java-symbol type="string" name="seconds" />
 
-  <!-- Lock screen always show battery -->
-  <java-symbol type="string" name="lockscreen_discharging" />
-
   <!-- Progress Bar -->
   <java-symbol type="dimen" name="spb_default_stroke_width" />
   <java-symbol type="dimen" name="spb_default_stroke_separator_length" />
