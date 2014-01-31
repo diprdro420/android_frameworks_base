@@ -111,6 +111,7 @@ public class NavigationBarView extends LinearLayout {
     private Drawable mRecentIcon;
     private Drawable mRecentLandIcon;
     private Drawable mHomeIcon, mHomeLandIcon;
+    private Drawable mRecentAltIcon, mRecentAltLandIcon;
 
     private DelegateViewHelper mDelegateHelper;
     private DeadZone mDeadZone;
@@ -476,6 +477,8 @@ public class NavigationBarView extends LinearLayout {
         mRecentLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_land);
         mHomeIcon = res.getDrawable(R.drawable.ic_sysbar_home);
         mHomeLandIcon = res.getDrawable(R.drawable.ic_sysbar_home_land);
+        mRecentAltIcon = res.getDrawable(R.drawable.ic_sysbar_recent_clear);
+        mRecentAltLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_clear_land);
     }
 
     public void updateResources(Resources res) {
@@ -639,6 +642,17 @@ public class NavigationBarView extends LinearLayout {
         }
     }
 
+    public void setButtonDrawable(int buttonId, final int iconId) {
+        final ImageView iv = (ImageView)getNotifsButton();
+        mHandler.post(new Runnable() {
+            public void run() {
+                if (iconId == 1) iv.setImageResource(R.drawable.search_light_land);
+                else iv.setImageDrawable(mVertical ? mRecentAltLandIcon : mRecentAltIcon);
+                setVisibleOrGone(getNotifsButton(), iconId != 0);
+            }
+        });
+    }
+
     public void setDisabledFlags(int disabledFlags) {
         setDisabledFlags(disabledFlags, false);
     }
@@ -689,11 +703,19 @@ public class NavigationBarView extends LinearLayout {
         // TODO(): Ideally we should integrate with DevicePolicyManager for application widget too.
         final boolean showApplicationWidget = showSearch &&
                 mApplicationWidgetPackageName != null && mLockUtils.getApplicationWidgetEnabled();
+        final boolean showNotifs = showSearch &&
+                Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.LOCKSCREEN_NOTIFICATIONS, 1) == 1 &&
+                Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.LOCKSCREEN_NOTIFICATIONS_PRIVACY_MODE, 0) == 0;
 
         setVisibleOrGone(getSearchLight(), showSearch && mModLockDisabled
                 && NavigationRingHelpers.hasLockscreenTargets(mContext));
         setVisibleOrGone(getCameraButton(), showCamera);
         setVisibleOrGone(getApplicationWidgetButton(), showApplicationWidget);
+        // Just hide view if neccessary - don't show it because that interferes with Keyguard
+        // which uses setButtonDrawable to decide whether it should be shown
+        if (!showNotifs) setVisibleOrGone(getNotifsButton(), showNotifs);
 
         mBarTransitions.applyBackButtonQuiescentAlpha(mBarTransitions.getMode(), true /*animate*/);
     }
