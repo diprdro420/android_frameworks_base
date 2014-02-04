@@ -254,8 +254,6 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     private boolean mCustomRecent = true;
 
-    protected ActiveDisplayView mActiveDisplayView;
-
     @ChaosLab(name="GestureAnywhere", classification=Classification.NEW_FIELD)
     protected GestureAnywhereView mGestureAnywhereView;
 
