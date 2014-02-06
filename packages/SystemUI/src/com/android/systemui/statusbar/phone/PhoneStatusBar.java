@@ -406,19 +406,41 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.APP_SIDEBAR_POSITION), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CUSTOM_HEADER), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_CONTROLS), false, this,
+                    UserHandle.USER_ALL);
             updateSettings();
             updateClockLocation();
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(Settings.System.STATUS_BAR_CLOCK))) {
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK))) {
                 updateClockLocation();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.PIE_CONTROLS))) {
+                attachPieContainer(isPieEnabled());
             } else {
                 updateSettings();
             }
         }
     }
+
+    private boolean isPieEnabled() {
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.PIE_CONTROLS, 0,
+                UserHandle.USER_CURRENT) == 1;
+    }
+
+    private boolean isExpanded() {
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.EXPANDED_DESKTOP_STATE, 0,
+                UserHandle.USER_CURRENT) == 1;
+    }
+
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
     private ContentObserver mUserSetupObserver = new ContentObserver(new Handler()) {
@@ -656,6 +678,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNavigationBarView.setDisabledFlags(mDisabled);
         mNavigationBarView.setBar(this);
+        addNavigationBarCallback(mNavigationBarView);
         mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -668,6 +691,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             removeSidebarView();
         }
         addSidebarView();
+
+        // Setup pie container if enabled
+        attachPieContainer(isPieEnabled());
 
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
@@ -1812,8 +1838,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         | StatusBarManager.DISABLE_RECENT
                         | StatusBarManager.DISABLE_BACK
                         | StatusBarManager.DISABLE_SEARCH)) != 0) {
-            // the nav bar will take care of these
-            if (mNavigationBarView != null) mNavigationBarView.setDisabledFlags(state);
+
+            // All navigation bar listeners will take care of these
+            propagateDisabledFlags(state);
 
             if ((state & StatusBarManager.DISABLE_RECENT) != 0) {
                 // close recents if it's visible
@@ -2555,6 +2582,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNavigationIconHints = hints;
 
+        propagateNavigationIconHints(hints);
+
         checkBarModes();
     }
 
@@ -2795,6 +2824,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (DEBUG) {
             Log.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
         }
+
+        propagateMenuVisibility(showMenu);
 
         // See above re: lights-out policy for legacy apps.
         if (showMenu) setLightsOn(true);
@@ -3571,6 +3602,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mRecreating = false;
             }
         });
+
+        restorePieTriggerMask();
+
+        mRecreating = false;
     }
 
     private void removeAllViews(ViewGroup parent) {
