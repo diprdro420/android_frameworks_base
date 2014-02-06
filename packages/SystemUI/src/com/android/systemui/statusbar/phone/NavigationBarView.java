@@ -70,7 +70,7 @@ import com.android.systemui.statusbar.policy.KeyButtonView;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
-public class NavigationBarView extends LinearLayout {
+public class NavigationBarView extends LinearLayout implements BaseStatusBar.NavigationBarCallback {
     final static boolean DEBUG = false;
     final static String TAG = "PhoneStatusBar/NavigationBarView";
 
@@ -498,6 +498,11 @@ public class NavigationBarView extends LinearLayout {
         setDisabledFlags(mDisabledFlags, true);
     }
 
+    @Override
+    public void setNavigationIconHints(int hints) {
+        setNavigationIconHints(hints, false);
+    }
+
     public void setNavigationIconHints(int hints, boolean force) {
         if (!force && hints == mNavigationIconHints) return;
         final boolean backAlt = (hints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0;
@@ -559,6 +564,19 @@ public class NavigationBarView extends LinearLayout {
         }
     }
 
+    public void setButtonDrawable(int buttonId, final int iconId) {
+        final ImageView iv = (ImageView)getNotifsButton();
+        mHandler.post(new Runnable() {
+            public void run() {
+                if (iconId == 1) iv.setImageResource(R.drawable.search_light_land);
+                else iv.setImageDrawable(mVertical ? mRecentAltLandIcon : mRecentAltIcon);
+                mWasNotifsButtonVisible = iconId != 0 && ((mDisabledFlags & View.STATUS_BAR_DISABLE_HOME) != 0);
+                setVisibleOrGone(getNotifsButton(), mWasNotifsButtonVisible);
+            }
+        });
+    }
+
+    @Override
     public void setDisabledFlags(int disabledFlags) {
         setDisabledFlags(disabledFlags, false);
     }
@@ -652,6 +670,11 @@ public class NavigationBarView extends LinearLayout {
             WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
             wm.updateViewLayout(this, lp);
         }
+    }
+
+    @Override
+    public void setMenuVisibility(final boolean show) {
+        setMenuVisibility(show, false);
     }
 
     public void setMenuVisibility(final boolean show, final boolean force) {
