@@ -3519,8 +3519,20 @@ public final class Settings {
          */
         public static final String QUIET_HOURS_DIM = "quiet_hours_dim";
 
-         /**
-         * Action for long-pressing back button on lock screen
+        /**
+         * show clear all recents button
+         *  @hide
+         */
+        public static final String SHOW_CLEAR_RECENTS_BUTTON = "clear_recents_button";
+
+        /**
+         * location of the clear all rectents button
+         * @hide
+         */
+        public static final String CLEAR_RECENTS_BUTTON_LOCATION = "clear_recents_button_location";
+
+        /**
+         * Whether to colorize the default application icons
          * @hide
          */
         public static final String LOCKSCREEN_LONG_BACK_ACTION = "lockscreen_long_back_action";
