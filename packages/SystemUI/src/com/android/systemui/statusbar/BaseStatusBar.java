@@ -222,6 +222,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     public boolean mHaloTaskerActive = false;
     protected ImageView mHaloButton;
 
+    private EdgeGestureManager mEdgeGestureManager;
+
     // UI-specific methods
 
     /**
@@ -547,8 +549,11 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     private void initPieController() {
+        if (mEdgeGestureManager == null) {
+            mEdgeGestureManager = EdgeGestureManager.getInstance();
+        }
         if (mPieController == null) {
-            mPieController = new PieController(mContext, this);
+            mPieController = new PieController(mContext, this, mEdgeGestureManager);
             addNavigationBarCallback(mPieController);
         }
     }
@@ -559,6 +564,12 @@ public abstract class BaseStatusBar extends SystemUI implements
             mPieController.attachContainer();
         } else {
             mPieController.detachContainer(false);
+        }
+    }
+
+    public void setOverwriteImeIsActive(boolean enabled) {
+        if (mEdgeGestureManager != null) {
+            mEdgeGestureManager.setOverwriteImeIsActive(enabled);
         }
     }
 
