@@ -270,7 +270,7 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
         }
     };
 
-    public PieController(Context context, BaseStatusBar statusBar) {
+    public PieController(Context context, BaseStatusBar statusBar, EdgeGestureManager pieManager) {
         mContext = context;
         mStatusBar = statusBar;
 
@@ -283,7 +283,7 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
                     (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         }
 
-        mPieManager = EdgeGestureManager.getInstance();
+        mPieManager = pieManager;
         mPieManager.setEdgeGestureActivationListener(mPieActivationListener);
 
         mActionTarget = new ActionTarget(mContext);
