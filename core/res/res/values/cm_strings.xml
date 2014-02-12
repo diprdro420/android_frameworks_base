@@ -291,6 +291,9 @@
     <string name="stk_cc_ss_to_dial">SS request is modified to DIAL request.</string>
     <string name="stk_cc_ss_to_ussd">SS request is modified to USSD request.</string>
     <string name="stk_cc_ss_to_ss">SS request is modified to new SS request.</string>
+    
+    <!-- Error description on theme switch with ligtsensor mode enabled -->
+    <string name="theme_auto_switch_mode_error">Automatic light condition change mode is enabled. Manual switching is not possible.</string>
 
     <!-- Theme installation error notification -->
     <string name="theme_install_error_title">Failed to install theme</string>
