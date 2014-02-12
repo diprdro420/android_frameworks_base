@@ -1624,6 +1624,8 @@ int ResTable_config::compare(const ResTable_config& o) const {
     if (diff != 0) return diff;
     diff = (int32_t)(screenLayout - o.screenLayout);
     if (diff != 0) return diff;
+    diff = (int32_t)(uiThemeMode - o.uiThemeMode);
+    if (diff != 0) return diff;
     diff = (int32_t)(uiMode - o.uiMode);
     if (diff != 0) return diff;
     diff = (int32_t)(smallestScreenWidthDp - o.smallestScreenWidthDp);
@@ -1684,6 +1686,9 @@ int ResTable_config::compareLogical(const ResTable_config& o) const {
     if (screenLayout != o.screenLayout) {
         return screenLayout < o.screenLayout ? -1 : 1;
     }
+    if (uiThemeMode != o.uiThemeMode) {
+        return uiThemeMode < o.uiThemeMode ? -1 : 1;
+    }
     if (uiMode != o.uiMode) {
         return uiMode < o.uiMode ? -1 : 1;
     }
@@ -1709,6 +1714,7 @@ int ResTable_config::diff(const ResTable_config& o) const {
     if (version != o.version) diffs |= CONFIG_VERSION;
     if ((screenLayout & MASK_LAYOUTDIR) != (o.screenLayout & MASK_LAYOUTDIR)) diffs |= CONFIG_LAYOUTDIR;
     if ((screenLayout & ~MASK_LAYOUTDIR) != (o.screenLayout & ~MASK_LAYOUTDIR)) diffs |= CONFIG_SCREEN_LAYOUT;
+    if (uiThemeMode != o.uiThemeMode) diffs |= CONFIG_UI_THEME_MODE;
     if (uiMode != o.uiMode) diffs |= CONFIG_UI_MODE;
     if (smallestScreenWidthDp != o.smallestScreenWidthDp) diffs |= CONFIG_SMALLEST_SCREEN_SIZE;
     if (screenSizeDp != o.screenSizeDp) diffs |= CONFIG_SCREEN_SIZE;
@@ -1783,6 +1789,11 @@ bool ResTable_config::isMoreSpecificThan(const ResTable_config& o) const {
     if (orientation != o.orientation) {
         if (!orientation) return false;
         if (!o.orientation) return true;
+    }
+
+    if (uiThemeMode != o.uiThemeMode) {
+        if (!uiThemeMode) return false;
+        if (!o.uiThemeMode) return true;
     }
 
     if (uiMode || o.uiMode) {
@@ -1955,6 +1966,10 @@ bool ResTable_config::isBetterThan(const ResTable_config& o,
 
         if ((orientation != o.orientation) && requested->orientation) {
             return (orientation);
+        }
+
+        if (uiThemeMode != o.uiThemeMode && requested->uiThemeMode) {
+            return (uiThemeMode);
         }
 
         if (uiMode || o.uiMode) {
@@ -2163,6 +2178,9 @@ bool ResTable_config::match(const ResTable_config& settings) const {
             return false;
         }
     }
+    if (uiThemeMode != 0 && uiThemeMode != settings.uiThemeMode) {
+        return false;
+    }
     if (input != 0) {
         const int keysHidden = inputFlags&MASK_KEYSHIDDEN;
         const int setKeysHidden = settings.inputFlags&MASK_KEYSHIDDEN;
@@ -2316,6 +2334,20 @@ String8 ResTable_config::toString() const {
                 break;
             default:
                 res.appendFormat("orientation=%d", dtohs(orientation));
+                break;
+        }
+    }
+    if (uiThemeMode != UI_THEME_MODE_ANY) {
+        if (res.size() > 0) res.append("-");
+        switch (uiThemeMode) {
+            case ResTable_config::UI_THEME_MODE_HOLO_DARK:
+                res.append("holodark");
+                break;
+            case ResTable_config::UI_THEME_MODE_HOLO_LIGHT:
+                res.append("hololight");
+                break;
+            default:
+                res.appendFormat("uiThemeMode=%d", dtohs(uiThemeMode));
                 break;
         }
     }

@@ -208,6 +208,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mIconHPadding = -1;
     Display mDisplay;
     Point mCurrentDisplaySize = new Point();
+    int mCurrUiThemeMode;
     private float mHeadsUpVerticalOffset;
     private int[] mPilePosition = new int[2];
 
@@ -543,6 +544,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBatteryController = new BatteryController(mContext);
         mDockBatteryController = new DockBatteryController(mContext);
         mBluetoothController = new BluetoothController(mContext);
+
+        mCurrUiThemeMode = mContext.getResources().getConfiguration().uiThemeMode;
 
         super.start(); // calls createAndAddWindows()
 
@@ -3549,14 +3552,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         final Resources res = context.getResources();
 
         // detect theme change.
-        ThemeConfig newTheme = res.getConfiguration().themeConfig;
+        CustomTheme newTheme = res.getConfiguration().customTheme;
+        int uiThemeMode = res.getConfiguration().uiThemeMode;
         if (newTheme != null &&
                 (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
             mCurrentTheme = (ThemeConfig)newTheme.clone();
             recreateStatusBar();
-        } else {
+        if (uiThemeMode != mCurrUiThemeMode) {
+            mCurrUiThemeMode = uiThemeMode;
+            //recreateStatusBar();
+        }
 
-            if (mClearButton instanceof TextView) {
+        if (mClearButton instanceof TextView) {
                 ((TextView)mClearButton).setText(context.getText(R.string.status_bar_clear_all_button));
             }
             loadDimens();
@@ -3564,12 +3571,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // Update the QuickSettings container
         if (mQS != null) mQS.updateResources();
-        if (mRibbonQS != null)
-            mRibbonQS.updateResources();
-        if (mNavigationBarView != null)  {
-            mNavigationBarView.updateResources(getNavbarThemedResources());
-            updateSearchPanel();
-        }
     }
 
     protected void loadDimens() {
