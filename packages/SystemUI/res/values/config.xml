@@ -120,13 +120,13 @@
         Default for pie is high sensivity -->
     <integer name="pie_gesture_sensivity">8</integer>
 
-    <!-- Default value how much apps show the app screenshot on recents view entry -->
-    <integer name="expanded_items_default">2</integer>
-
     <!-- Default screen recorder video dimensions expressed as WxH -->
     <string name="config_screenRecorderOutputDimensions">720x1280</string>
 
     <!-- Default screen recorder framerate -->
     <integer name="config_screenRecorderFramerate">4000000</integer>
+
+    <!-- Default value how much apps show the app screenshot on recents view entry -->
+    <integer name="expanded_items_default">2</integer>
 
 </resources>
