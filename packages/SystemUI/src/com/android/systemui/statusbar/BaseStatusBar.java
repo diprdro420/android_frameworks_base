@@ -90,6 +90,7 @@ import com.android.internal.util.cm.SpamFilter.SpamContract.NotificationTable;
 import com.android.internal.util.cm.SpamFilter.SpamContract.PackageTable;
 import com.android.internal.widget.SizeAdaptiveLayout;
 import com.android.systemui.R;
+import com.android.systemui.RecentsComponent;
 import com.android.systemui.SearchPanelView;
 import com.android.systemui.SystemUI;
 import com.android.systemui.cm.SpamMessageProvider;
@@ -161,6 +162,10 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected int mCurrentUserId = 0;
 
+    // Recents toggle controller
+    private RecentController slimRecents;
+    private RecentsComponent stockRecents;
+
     protected int mLayoutDirection = -1; // invalid
     private Locale mLocale;
     protected boolean mUseHeadsUp = false;
@@ -202,8 +207,6 @@ public abstract class BaseStatusBar extends SystemUI implements
     private boolean mDeviceProvisioned = false;
     private int mAutoCollapseBehaviour;
 
-    private RecentController mRecents;
-
     private ArrayList<String> mDndList;
     private ArrayList<String> mBlacklist;
 
@@ -212,6 +215,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     // App sidebar
     protected AppSidebar mAppSidebar;
     protected int mSidebarPosition;
+
+    private boolean mCustomRecent = true;
 
     public Ticker getTicker() {
         return mTicker;
@@ -363,7 +368,14 @@ public abstract class BaseStatusBar extends SystemUI implements
         mLocale = mContext.getResources().getConfiguration().locale;
         mLayoutDirection = TextUtils.getLayoutDirectionFromLocale(mLocale);
 
-        mRecents = new RecentController(mContext, mLayoutDirection);
+        mCustomRecent = Settings.System.getBoolean(
+                mContext.getContentResolver(), Settings.System.CUSTOM_RECENT_TOGGLE, true);
+
+        if (mCustomRecent) {
+            slimRecents = new RecentController(mContext, mLayoutDirection);
+        } else {
+            stockRecents = getComponent(RecentsComponent.class);
+        }
 
         mStatusBarContainer = new FrameLayout(mContext);
 
@@ -823,32 +835,49 @@ public abstract class BaseStatusBar extends SystemUI implements
     };
 
     protected void toggleRecentsActivity() {
-        if (mRecents != null) {
-            mRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
+        if (mCustomRecent) {
+            if (slimRecents != null)
+                slimRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
+        } else {
+            if (stockRecents != null)
+                stockRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView(),
+                        mExpandedDesktopStyle);
         }
     }
 
     protected void preloadRecentTasksList() {
-        if (mRecents != null) {
-            mRecents.preloadRecentTasksList();
+        if (mCustomRecent) {
+            if (slimRecents != null)
+                slimRecents.preloadRecentTasksList();
+        } else {
+            if (stockRecents != null)
+                stockRecents.preloadRecentTasksList();
         }
     }
 
     protected void cancelPreloadingRecentTasksList() {
-        if (mRecents != null) {
-            mRecents.cancelPreloadingRecentTasksList();
+        if (mCustomRecent) {
+            if (slimRecents != null)
+                slimRecents.cancelPreloadingRecentTasksList();
+        } else {
+            if (stockRecents != null)
+                stockRecents.cancelPreloadingRecentTasksList();
         }
     }
 
     protected void closeRecents() {
-        if (mRecents != null) {
-            mRecents.closeRecents();
+        if (mCustomRecent) {
+            if (slimRecents != null)
+                slimRecents.closeRecents();
+        } else {
+            if (stockRecents != null)
+                stockRecents.closeRecents();
         }
     }
 
     protected void rebuildRecentsScreen() {
-        if (mRecents != null) {
-            mRecents.rebuildRecentsScreen();
+        if (mCustomRecent && slimRecents != null) {
+                slimRecents.rebuildRecentsScreen();
         }
     }
 

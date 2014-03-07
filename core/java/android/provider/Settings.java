@@ -3824,6 +3824,13 @@ public final class Settings {
          */
         public static final String KEY_APP_SWITCH_ACTION = "key_app_switch_action";
 
+       /**
+         * Custom Recent toggle
+         *
+         * @hide
+         */
+        public static final String CUSTOM_RECENT_TOGGLE = "custom_recent_toggle";
+
         /**
          * Action to perform when the app switch key is long-pressed. (Default is 0)
          * (See KEY_HOME_LONG_PRESS_ACTION for valid values)
