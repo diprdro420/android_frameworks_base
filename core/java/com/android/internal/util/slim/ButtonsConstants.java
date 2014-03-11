@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 SlimRoms Project
+* Copyright (C) 2013 SlimRoms Project
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -13,19 +13,10 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.android.internal.util.cm;
 
-import android.content.Context;
+package com.android.internal.util.slim;
 
-public class Converter {
-
-    public static int dpToPx(Context context, int dp) {
-        return (int) ((dp * context.getResources().getDisplayMetrics().density) + 0.5);
-    }
-
-    public static int pxToDp(Context context, int px) {
-        return (int) ((px / context.getResources().getDisplayMetrics().density) + 0.5);
-    }
+public class ButtonsConstants {
 
     public static final String ACTION_TORCH                = "**torch**";
 
