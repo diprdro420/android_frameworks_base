@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/* Copyright 2014 CarbonRom project
+/*
+** Copyright 2009, The Android Open Source Project
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -15,14 +16,13 @@
 ** limitations under the License.
 */
 -->
+
+<!-- These resources are around just to allow their values to be customized
+     for different hardware and product builds. -->
 <resources>
 
-  <!-- UI theme mode -->
-  <java-symbol type="integer" name="config_uiThemeMode" />
-  <java-symbol type="string" name="theme_auto_switch_mode_error" />
-  
-  <!-- On-The-Go -->
-  <java-symbol type="string" name="global_action_onthego" />
-  <java-symbol type="drawable" name="ic_lock_onthego" />
+    <!-- On-The-Go -->
+    <integer name="quick_settings_onthego_dialog_short_timeout">3000</integer>
+    <integer name="quick_settings_onthego_dialog_long_timeout">6000</integer>
 
 </resources>
