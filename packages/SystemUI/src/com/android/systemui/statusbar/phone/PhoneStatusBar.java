@@ -739,6 +739,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         if (mRecreating) {
         } else {
+
+            addAppCircleSidebar();
+            /* ChaosLab: GestureAnywhere - BEGIN */
             addGestureAnywhereView();
             /* ChaosLab: GestureAnywhere - END */
         }
