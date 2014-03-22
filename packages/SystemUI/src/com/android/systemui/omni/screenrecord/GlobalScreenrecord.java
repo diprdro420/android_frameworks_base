@@ -35,17 +35,21 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.media.MediaActionSound;
+import android.graphics.Point;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
+import android.view.WindowManager;
 
 import com.android.systemui.R;
 
@@ -69,18 +73,32 @@ class GlobalScreenrecord {
 
     private static final String TMP_PATH = "/sdcard/__tmp_screenrecord.mp4";
 
+    private static final String RECORDER_FOLDER = "ScreenRecorder";
+    private static final String RECORDER_PATH =
+            Environment.getExternalStorageDirectory().getAbsolutePath()
+                    + File.separator + RECORDER_FOLDER;
+
     private Context mContext;
     private Handler mHandler;
     private NotificationManager mNotificationManager;
-
-    private MediaActionSound mCameraSound;
 
     private CaptureThread mCaptureThread;
 
     private class CaptureThread extends Thread {
         public void run() {
+
+            WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+            final Display display = wm.getDefaultDisplay();
+            final ContentResolver resolver = mContext.getContentResolver();
+            final Resources res = mContext.getResources();
+
+            final String size = getVideoDimensions(res, display);
+            final String bit_rate = String.valueOf(Settings.System.getInt(resolver,
+                    Settings.System.SCREEN_RECORDER_BITRATE,
+                    res.getInteger(R.integer.config_screenRecorderFramerate)));
+
             Runtime rt = Runtime.getRuntime();
-            String[] cmds = new String[] {"/system/bin/screenrecord", TMP_PATH};
+            String[] cmds = new String[] {"/system/bin/screenrecord", "--size", size, "--bit-rate", bit_rate, TMP_PATH};
             try {
                 Process proc = rt.exec(cmds);
                 BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -215,18 +233,17 @@ class GlobalScreenrecord {
             mCaptureThread = null;
 
             String fileName = "SCR_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".mp4";
-            File pictures = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            File screenshots = new File(pictures, "Screenshots");
+            File f = new File(RECORDER_PATH);
 
-            if (!screenshots.exists()) {
-                if (!screenshots.mkdir()) {
-                    Log.e(TAG, "Cannot create screenshots directory");
+            if (!f.exists()) {
+                if (!f.mkdir()) {
+                    Log.e(TAG, "Cannot create output directory " + RECORDER_PATH);
                     return;
                 }
             }
 
             File input = new File(TMP_PATH);
-            final File output = new File(screenshots, fileName);
+            final File output = new File(RECORDER_PATH, fileName);
 
             Log.d(TAG, "Copying file to " + output.getAbsolutePath());
 
@@ -266,5 +283,42 @@ class GlobalScreenrecord {
             is.close();
             os.close();
         }
+    }
+
+    private String getVideoDimensions(Resources res, Display display) {
+        String dimensionString = Settings.System.getString(mContext.getContentResolver(),
+                Settings.System.SCREEN_RECORDER_OUTPUT_DIMENSIONS);
+        if (TextUtils.isEmpty(dimensionString)) {
+            dimensionString = res.getString(R.string.config_screenRecorderOutputDimensions);
+        }
+        int[] dimensions = parseDimensions(dimensionString);
+        if (dimensions == null) {
+            dimensions = new int[] {720, 1280};
+        }
+
+        // if rotation is Surface.ROTATION_90,270 and width>height swap
+        final Point p = new Point();
+        display.getRealSize(p);
+        if ((display.getRotation() == Surface.ROTATION_90 || display.getRotation() == Surface.ROTATION_270) && (p.x > p.y)) {
+            int tmp = dimensions[0];
+            dimensions[0] = dimensions[1];
+            dimensions[1] = tmp;
+        }
+
+        return dimensions[0] + "x" + dimensions[1];
+    }
+
+    private static int[] parseDimensions(String dimensions) {
+        String[] tmp = dimensions.split("x");
+        if (tmp.length < 2) return null;
+        int[] dims = new int[2];
+        try {
+            dims[0] = Integer.valueOf(tmp[0]);
+            dims[1] = Integer.valueOf(tmp[1]);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+        return dims;
     }
 }
