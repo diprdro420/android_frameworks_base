@@ -3605,11 +3605,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         restorePieTriggerMask();
 
-        if (mHaloButton != null) {
-            mHaloButton.setImageResource(mHaloActive
-                            ? R.drawable.ic_notify_halo_pressed
-                            : R.drawable.ic_notify_halo_normal);
-        }
+        restartHalo();
 
         mRecreating = false;
     }
