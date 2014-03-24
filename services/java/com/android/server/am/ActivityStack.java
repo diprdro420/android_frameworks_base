@@ -1313,6 +1313,18 @@ final class ActivityStack {
             if (prevTask == nextTask) {
                 prevTask.setFrontOfTask();
             } else if (prevTask != topTask()) {
+                ArrayList<ActivityRecord> activities = prevTask.mActivities;
+                final int numActivities = activities.size();
+                for (int activityNdx = 0; activityNdx < numActivities; ++activityNdx) {
+                    final ActivityRecord r = activities.get(activityNdx);
+                    // r is usually the same as next, but what if two activities were launched
+                    // before prev finished?
+                    if (!r.finishing) {
+                        r.frontOfTask = true;
+                        break;
+                    }
+                }
+            } else if (prevTask != topTask() && !prev.floatingWindow) {
                 // This task is going away but it was supposed to return to the home task.
                 // Now the task above it has to return to the home task instead.
                 final int taskNdx = mTaskHistory.indexOf(prevTask) + 1;
