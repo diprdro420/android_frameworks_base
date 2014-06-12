@@ -30,6 +30,7 @@ import android.os.Parcelable;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.CollapsibleActionView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -938,6 +939,17 @@ public class ActionBarView extends AbsActionBarView {
 //            throw new IllegalStateException(getClass().getSimpleName() + " can only be used " +
 //                    "with android:layout_height=\"wrap_content\"");
 //        }
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        if (widthMode != MeasureSpec.EXACTLY) {
+            Log.i(TAG, getClass().getSimpleName() + " should only be used " +
+                    "with android:layout_width=\"match_parent\" (or fill_parent)");
+        }
+
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        if (heightMode != MeasureSpec.AT_MOST) {
+            Log.i(TAG, getClass().getSimpleName() + " should only be used " +
+                    "with android:layout_height=\"wrap_content\"");
+        }
 
         int contentWidth = MeasureSpec.getSize(widthMeasureSpec);
 

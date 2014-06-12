@@ -21,6 +21,7 @@ import static android.view.KeyEvent.KEYCODE_BACK;
 
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
+import android.app.INotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -36,6 +37,7 @@ import android.database.Cursor;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.os.ServiceManager;
 import android.provider.Settings;
 import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
@@ -93,6 +95,7 @@ public class AppSidebar extends FrameLayout {
     private int mTriggerWidth;
     private int mTriggerTop;
     private int mTriggerBottom;
+    private INotificationManager mNotificationManager;
     private int mTriggerColor;
     private LinearLayout mAppContainer;
     private SnappingScrollView mScrollView;
@@ -105,7 +108,6 @@ public class AppSidebar extends FrameLayout {
     private boolean mFirstTouch = false;
     private boolean mHideTextLabels = false;
     private boolean mUseTab = false;
-    private boolean mFloatingWindow = false;
     private int mPosition = SIDEBAR_POSITION_RIGHT;
     private int mBarHeight;
 
@@ -298,6 +300,11 @@ public class AppSidebar extends FrameLayout {
     private void showAppContainer(boolean show) {
         if (mScrollView == null)
             return;
+        // initialize if null
+        if (mNotificationManager == null) {
+            mNotificationManager = INotificationManager.Stub.asInterface(
+                    ServiceManager.getService(Context.NOTIFICATION_SERVICE));
+        }
         mState = show ? SIDEBAR_STATE.OPENING : SIDEBAR_STATE.CLOSING;
         if (show) {
             mScrollView.setVisibility(View.VISIBLE);
@@ -515,16 +522,29 @@ public class AppSidebar extends FrameLayout {
         return super.dispatchKeyEventPreIme(event);
     }
 
-    private void launchApplication(AppItemInfo ai) {
+    private void launchApplication(AppItemInfo ai, boolean floating) {
         dismissFolderView();
         updateAutoHideTimer(500);
         ComponentName cn = new ComponentName(ai.packageName, ai.className);
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (mFloatingWindow) {
-            intent.addFlags(Intent.FLAG_FLOATING_WINDOW);
-            mFloatingWindow = false;
+        if (floating) {
+            boolean allowed = true;
+            try {
+                // preloaded apps are added to the blacklist array when is recreated, handled in the notification manager
+                allowed = mNotificationManager.isPackageAllowedForFloatingMode(ai.packageName);
+            } catch (android.os.RemoteException ex) {
+                // System is dead
+            }
+            if (allowed) {
+                intent.addFlags(Intent.FLAG_FLOATING_WINDOW);
+            } else {
+                String text = mContext.getResources().getString(R.string.floating_mode_blacklisted_app);
+                int duration = Toast.LENGTH_LONG;
+                Toast.makeText(mContext, text, duration).show();
+                return;
+            }
         }
         intent.setComponent(cn);
         mContext.startActivity(intent);
@@ -537,8 +557,7 @@ public class AppSidebar extends FrameLayout {
                 mFirstTouch = false;
                 return false;
             }
-            mFloatingWindow = true;
-            launchApplication((AppItemInfo)view.getTag());
+            launchApplication((AppItemInfo)view.getTag(), true);
             return true;
         }
     };
@@ -551,7 +570,7 @@ public class AppSidebar extends FrameLayout {
                 return;
             }
 
-            launchApplication((AppItemInfo)view.getTag());
+            launchApplication((AppItemInfo)view.getTag(), false);
         }
     };
 
