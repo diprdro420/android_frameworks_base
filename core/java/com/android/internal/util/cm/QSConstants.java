@@ -33,6 +33,7 @@ public class QSConstants {
         public static final String TILE_CAMERA = "toggleCamera";
         public static final String TILE_NETWORKADB = "toggleNetworkAdb";
         public static final String TILE_COMPASS = "toggleCompass";
+        public static final String TILE_SCREENSHOT = "toggleScreenshot";
         public static final String TILE_HEADS_UP = "toggleHeadsUp";
         public static final String TILE_MUSIC = "toggleMusic";
         public static final String TILE_ONTHEGO = "toggleOnTheGo";

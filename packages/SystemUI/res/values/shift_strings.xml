@@ -119,4 +119,10 @@
     <string name="quick_settings_appcirclebar_on_label">App Circle Bar On</string>
     <string name="quick_settings_appcirclebar_off_label">App Circle Bar Off</string>
     
+    <!-- Screenshot Tile -->
+    <string name="quick_settings_screenshot_label">Screenshot</string>
+    <string name="screenshot_toast">Screenshot in %1$d seconds</string>
+    <string name="permdesc_screenshot">Capture screenshot</string>
+    <string name="permlab_screenshot">Allows the app to cature a screenshot. This is protected by SystemUI.</string>
+    
 </resources>
