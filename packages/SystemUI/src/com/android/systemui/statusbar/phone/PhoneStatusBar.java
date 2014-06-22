@@ -295,6 +295,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // for heads up notifications
     private HeadsUpNotificationView mHeadsUpNotificationView;
     private int mHeadsUpNotificationDecay;
+    private int mHeadsUpNotificationFSDecay;
 
     // on-screen navigation buttons
     private NavigationBarView mNavigationBarView = null;
@@ -407,6 +408,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.PIE_CONTROLS), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_TIMEOUT), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_FS_TIMEOUT), false, this);
             updateSettings();
             updateClockLocation();
         }
@@ -1315,7 +1320,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mExpandedDesktopStyle == 1 || mExpandedDesktopStyle == 2;
             if (!sbVisible && !userForcedExpandedDesktop) {
                 mHandler.removeMessages(MSG_HIDE_HEADS_UP);
-                mHandler.sendEmptyMessageDelayed(MSG_HIDE_HEADS_UP, 700);
+                mHandler.sendEmptyMessageDelayed(MSG_HIDE_HEADS_UP, mHeadsUpNotificationFSDecay);
             } else {
                 mHandler.removeMessages(MSG_HIDE_HEADS_UP);
                 mHandler.sendEmptyMessageDelayed(MSG_HIDE_HEADS_UP, mHeadsUpNotificationDecay);
@@ -3261,6 +3266,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mSidebarPosition = sidebarPosition;
             mWindowManager.updateViewLayout(mAppSidebar, getAppSidebarLayoutParams(sidebarPosition));
         }
+
+        updateCustomHeaderStatus();
+
+        mHeadsUpNotificationDecay = Settings.System.getInt(
+                    resolver, Settings.System.HEADS_UP_TIMEOUT,
+                    mContext.getResources().getInteger(R.integer.heads_up_notification_decay));
+
+        mHeadsUpNotificationFSDecay = Settings.System.getInt(
+                    resolver, Settings.System.HEADS_UP_FS_TIMEOUT, 700);
     }
 
     private void resetUserSetupObserver() {
@@ -3489,7 +3503,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationPanelMinHeightFrac = 0f;
         }
 
-        mHeadsUpNotificationDecay = res.getInteger(R.integer.heads_up_notification_decay);
         mRowHeight =  res.getDimensionPixelSize(R.dimen.notification_row_min_height);
 
         if (false) Log.v(TAG, "updateResources");
