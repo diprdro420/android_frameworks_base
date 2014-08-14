@@ -3932,6 +3932,12 @@ public final class Settings {
         public static final String BATTERY_AROUND_LOCKSCREEN_RING = "battery_around_lockscreen_ring";
 
         /**
+         * Show call recording button in incallui (default = 0)
+         * @hide
+         */
+        public static final String ALLOW_CALL_RECORDING = "allow_call_recording";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
