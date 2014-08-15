@@ -33,6 +33,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.AudioService;
 import android.media.AudioSystem;
@@ -133,6 +134,8 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     private final boolean mTranslucentDialog;
     private boolean mShouldRunDropTranslucentAnimation = false;
     private boolean mRunningDropTranslucentAnimation = false;
+    private Drawable defaultBackground;
+    private int mPanelColor;
 
     // True if we want to play tones on the system stream when the master stream is specified.
     private final boolean mPlayMasterStreamTones;
@@ -251,6 +254,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
             changeOverlayStyle(overlayStyle);
             mCustomTimeoutDelay = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.VOLUME_PANEL_TIMEOUT, TIMEOUT_DELAY);
+            setColor();
         }
     };
 
@@ -379,6 +383,10 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
         // This is new with 4.2 it seems
         boolean masterVolumeOnly = context.getResources().getBoolean(
                 com.android.internal.R.bool.config_useMasterVolume);
+                mSettingsObserver, UserHandle.USER_ALL);
+        context.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.VOLUME_PANEL_BG_COLOR), false,
+                mSettingsObserver, UserHandle.USER_ALL);
         boolean masterVolumeKeySounds = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_useVolumeKeySounds);
 
@@ -387,7 +395,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
 
         mMoreButton.setOnClickListener(this);
         listenToRingerMode();
-
         applyTranslucentWindow();
     }
 
@@ -410,6 +417,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                 }
             }
         }, filter);
+        setColor();
     }
 
     private void changeOverlayStyle(int newStyle) {
@@ -449,6 +457,66 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                 mShowCombinedVolumes = false;
                 mCurrentOverlayStyle = VOLUME_OVERLAY_NONE;
                 break;
+        }
+    }
+
+    public void setLayoutDirection(int layoutDirection) {
+        mPanel.setLayoutDirection(layoutDirection);
+        updateStates();
+    }
+
+    public void setTheme() {
+        // Force reload the background (to do not get the old cached one)
+        // and update the states.
+        mPanel.setBackgroundResource(R.color.transparent);
+        setColor();
+        updateStates();
+    }
+
+    private void setColor() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        defaultBackground = mContext.getResources().getDrawable(
+            R.drawable.dialog_full_holo_dark).getCurrent();
+        mPanelColor = Settings.System.getIntForUser(resolver,
+                Settings.System.VOLUME_PANEL_BG_COLOR, -2, UserHandle.USER_CURRENT);
+
+        if (mPanelColor == Integer.MIN_VALUE
+            || mPanelColor == -2) {
+            // Flag to reset volume panel background color
+            mPanel.setBackground(defaultBackground);
+        } else {
+            if (mPanelColor != 0x00ffffff) {
+                mPanel.setBackgroundColor(mPanelColor);
+            } else {
+                mPanel.setBackgroundResource(R.drawable.dialog_full_holo_dark);
+            }
+        }
+    }
+
+    private void listenToRingerMode() {
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
+        mContext.registerReceiver(new BroadcastReceiver() {
+
+            public void onReceive(Context context, Intent intent) {
+                final String action = intent.getAction();
+
+                if (AudioManager.RINGER_MODE_CHANGED_ACTION.equals(action)) {
+                    removeMessages(MSG_RINGER_MODE_CHANGED);
+                    sendMessage(obtainMessage(MSG_RINGER_MODE_CHANGED));
+                }
+            }
+        }, filter);
+    }
+
+    private boolean isMuted(int streamType) {
+        if (streamType == STREAM_MASTER) {
+            return mAudioManager.isMasterMute();
+        } else if (streamType == AudioService.STREAM_REMOTE_MUSIC) {
+            return (mAudioService.getRemoteStreamVolume() <= 0);
+        } else {
+            return mAudioManager.isStreamMute(streamType);
         }
     }
 
