@@ -54,6 +54,7 @@ import java.io.PrintWriter;
 
 import com.android.internal.R;
 import com.android.internal.app.DisableCarModeActivity;
+import com.android.internal.statusbar.IStatusBarService;
 import com.android.server.TwilightService.TwilightState;
 
 final class UiModeManagerService extends IUiModeManager.Stub
@@ -61,6 +62,9 @@ final class UiModeManagerService extends IUiModeManager.Stub
 
     private static final String TAG = UiModeManager.class.getSimpleName();
     private static final boolean LOG = false;
+
+    private static float LIGHT_CONDITION = 25f;
+    private static float DARK_CONDITION  = 0.25f;
 
     // Enable launching of applications when entering the dock.
     private static final boolean ENABLE_LAUNCH_CAR_DOCK_APP = true;
