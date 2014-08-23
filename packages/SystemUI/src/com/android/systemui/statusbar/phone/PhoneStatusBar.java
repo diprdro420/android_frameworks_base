@@ -249,6 +249,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mSettingsPanelGravity;
     private TilesChangedObserver mTilesChangedObserver;
     private SettingsObserver mSettingsObserver;
+    private DevForceNavbarObserver mDevForceNavbarObserver;
 
     // Ribbon settings
     private boolean mHasQuickAccessSettings;
