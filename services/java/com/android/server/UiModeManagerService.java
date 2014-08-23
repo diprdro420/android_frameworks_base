@@ -544,6 +544,7 @@ final class UiModeManagerService extends IUiModeManager.Stub
                         Settings.Secure.UI_THEME_MODE, mSetUiThemeMode,
                         UserHandle.USER_CURRENT);
             }
+
             try {
                 ActivityManagerNative.getDefault().updateConfiguration(mConfiguration);
             } catch (RemoteException e) {
