@@ -39,8 +39,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
@@ -58,18 +56,8 @@ import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityManager.TouchExplorationStateChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import com.android.internal.widget.LockPatternUtils;
-import com.android.internal.util.slim.ButtonConfig;
-import com.android.internal.util.slim.ButtonsConstants;
-import com.android.internal.util.slim.ButtonsHelper;
-import com.android.internal.util.slim.ImageHelper;
-import com.android.internal.util.slim.DeviceUtils;
-import com.android.internal.widget.LockPatternUtils;
-import com.android.internal.util.slim.ButtonConfig;
-import com.android.internal.util.slim.ButtonsConstants;
-import com.android.internal.util.slim.ButtonsHelper;
-import com.android.internal.util.slim.ImageHelper;
-import com.android.internal.util.slim.DeviceUtils;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.DelegateViewHelper;
@@ -131,10 +119,6 @@ public class NavigationBarView extends LinearLayout {
 
     // Visibility of R.id.six view prior to swapping it for a right arrow key
     public int mSlotSixVisibility = -1;
-
-    boolean mWasNotifsButtonVisible = false;
-
-    private static LockPatternUtils mLockPatternUtils;
 
     // workaround for LayoutTransitions leaving the nav buttons in a weird state (bug 5549288)
     final static boolean WORKAROUND_INVALID_LAYOUT = true;
@@ -211,10 +195,10 @@ public class NavigationBarView extends LinearLayout {
 
     private final OnTouchListener mCameraTouchListener = new OnTouchListener() {
         @Override
-        public boolean onTouch(View view, MotionEvent event) {
+        public boolean onTouch(View cameraButtonView, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    // disable search gesture while interacting with additional navbar button
+                    // disable search gesture while interacting with camera
                     mDelegateHelper.setDisabled(true);
                     mBarTransitions.setContentVisible(false);
                     break;
@@ -225,13 +209,6 @@ public class NavigationBarView extends LinearLayout {
                     break;
             }
             return KeyguardTouchDelegate.getInstance(getContext()).dispatch(event);
-        }
-    };
-
-    private final OnClickListener mNavBarClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            KeyguardTouchDelegate.getInstance(getContext()).dispatchButtonClick(0);
         }
     };
 
@@ -275,10 +252,6 @@ public class NavigationBarView extends LinearLayout {
 
         mBarTransitions = new NavigationBarTransitions(this);
 
-        disableCameraByUser();
-        mLockPatternUtils = new LockPatternUtils(context);
-
-        disableCameraByUser();
         mCameraDisabledByDpm = isCameraDisabledByDpm();
         watchForDevicePolicyChanges();
 
@@ -421,44 +394,6 @@ public class NavigationBarView extends LinearLayout {
         mRecentLandIcon = res.getDrawable(R.drawable.ic_sysbar_recent_land);
         mHomeIcon = res.getDrawable(R.drawable.ic_sysbar_home);
         mHomeLandIcon = res.getDrawable(R.drawable.ic_sysbar_home_land);
-    @Override
-    public void setLayoutDirection(int layoutDirection) {
-        updateSettings();
-
-        super.setLayoutDirection(layoutDirection);
-    }
-
-    public void notifyScreenOn(boolean screenOn) {
-        mScreenOn = screenOn;
-        setDisabledFlags(mDisabledFlags, true);
-    // used for lockscreen notifications
-    public View getNotifsButton() {
-        return mCurrentView.findViewById(R.id.show_notifs);
-    }
-
-    public void updateResources() {
-        for (int i = 0; i < mRotatedViews.length; i++) {
-            ViewGroup container = (ViewGroup) mRotatedViews[i];
-            if (container != null) {
-                updateKeyButtonViewResources(container);
-            }
-        }
-    }
-
-    private void updateKeyButtonViewResources(ViewGroup container) {
-        // TODO: fix this for AOKP
-    }
-
-    @Override
-    public void setLayoutDirection(int layoutDirection) {
-        updateSettings();
-
-        super.setLayoutDirection(layoutDirection);
-    }
-
-    public void notifyScreenOn(boolean screenOn) {
-        mScreenOn = screenOn;
-        setDisabledFlags(mDisabledFlags, true);
     }
 
     public void updateResources(Resources res) {
@@ -619,20 +554,6 @@ public class NavigationBarView extends LinearLayout {
         }
     }
 
-    @Override
-    public void setButtonDrawable(int buttonId, final int iconId) {
-        final ImageView iv = (ImageView)getNotifsButton();
-        mHandler.post(new Runnable() {
-            public void run() {
-                iv.setImageResource((iconId == 1) ?
-                        R.drawable.search_light_land : R.drawable.ic_notify_clear_normal);
-                mWasNotifsButtonVisible = iconId != 0
-                        && ((mDisabledFlags & View.STATUS_BAR_DISABLE_HOME) != 0);
-                setVisibleOrGone(getNotifsButton(), mWasNotifsButtonVisible);
-            }
-        });
-    }
-
     public void setDisabledFlags(int disabledFlags) {
         setDisabledFlags(disabledFlags, false);
     }
@@ -683,17 +604,6 @@ public class NavigationBarView extends LinearLayout {
 
         setVisibleOrGone(getSearchLight(), showSearch && mModLockDisabled);
         setVisibleOrGone(getCameraButton(), showCamera);
-
-        final boolean showSearch = disableHome && !disableSearch;
-        final boolean showCamera = showSearch && !mCameraDisabledByDpm;
-        final boolean showNotifs = showSearch &&
-                Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.LOCKSCREEN_NOTIFICATIONS, 1) == 1 &&
-                !mLockPatternUtils.isSecure();
-
-        setVisibleOrGone(getSearchLight(), showSearch);
-        setVisibleOrGone(getCameraButton(), showCamera);
-        setVisibleOrGone(getNotifsButton(), showNotifs && mWasNotifsButtonVisible);
 
         mBarTransitions.applyBackButtonQuiescentAlpha(mBarTransitions.getMode(), true /*animate*/);
     }
@@ -801,15 +711,11 @@ public class NavigationBarView extends LinearLayout {
             }
 
             final View cameraButton = mRotatedViews[i].findViewById(R.id.camera_button);
-            final View notifsButton = mRotatedViews[i].findViewById(R.id.show_notifs);
             final View searchLight = mRotatedViews[i].findViewById(R.id.search_light);
             if (cameraButton != null) {
                 hasCamera = true;
                 cameraButton.setOnTouchListener(onTouchListener);
                 cameraButton.setOnClickListener(onClickListener);
-            }
-            if (notifsButton != null) {
-                notifsButton.setOnClickListener(mNavBarClickListener);
             }
             if (searchLight != null) {
                 searchLight.setOnClickListener(onClickListener);

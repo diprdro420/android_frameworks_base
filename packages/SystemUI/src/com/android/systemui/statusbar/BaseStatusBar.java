@@ -606,66 +606,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         mHandler.sendEmptyMessage(msg);
     }
 
-    @Override
-    public void toggleScreenshot() {
-        int msg = MSG_TOGGLE_SCREENSHOT;
-        mHandler.removeMessages(msg);
-        mHandler.sendEmptyMessage(msg);
-    }
-
-    @Override
-    public void toggleLastApp() {
-        int msg = MSG_TOGGLE_LAST_APP;
-        mHandler.removeMessages(msg);
-        mHandler.sendEmptyMessage(msg);
-    }
-
-    @Override
-    public void toggleKillApp() {
-        int msg = MSG_TOGGLE_KILL_APP;
-        mHandler.removeMessages(msg);
-        mHandler.sendEmptyMessage(msg);
-    }
-
-    @Override
-    public void setPieTriggerMask(int newMask, boolean lock) {
-        int msg = MSG_SET_PIE_TRIGGER_MASK;
-        mHandler.removeMessages(msg);
-        mHandler.obtainMessage(MSG_SET_PIE_TRIGGER_MASK,
-                newMask, lock ? 1 : 0, null).sendToTarget();
-    }
-
-    @Override
-    public void toggleScreenshot() {
-        int msg = MSG_TOGGLE_SCREENSHOT;
-        mHandler.removeMessages(msg);
-        mHandler.sendEmptyMessage(msg);
-    }
-
-    @Override
-    public void toggleLastApp() {
-        int msg = MSG_TOGGLE_LAST_APP;
-        mHandler.removeMessages(msg);
-        mHandler.sendEmptyMessage(msg);
-    }
-
-    @Override
-    public void toggleKillApp() {
-        int msg = MSG_TOGGLE_KILL_APP;
-        mHandler.removeMessages(msg);
-        mHandler.sendEmptyMessage(msg);
-    }
-
-    @Override
-    public void setPieTriggerMask(int newMask, boolean lock) {
-        int msg = MSG_SET_PIE_TRIGGER_MASK;
-        mHandler.removeMessages(msg);
-        mHandler.obtainMessage(MSG_SET_PIE_TRIGGER_MASK,
-                newMask, lock ? 1 : 0, null).sendToTarget();
-    }
-
-    public void setButtonDrawable(int buttonId, int iconId) {}
-
     protected abstract WindowManager.LayoutParams getSearchLayoutParams(
             LayoutParams layoutParams);
 
