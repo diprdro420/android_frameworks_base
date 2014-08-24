@@ -538,6 +538,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         mCurrUiThemeMode = mContext.getResources().getConfiguration().uiThemeMode;
+
         mLocationController = new LocationController(mContext);
         mBatteryController = new BatteryController(mContext);
         mDockBatteryController = new DockBatteryController(mContext);
@@ -3451,23 +3452,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // detect theme change.
         ThemeConfig newTheme = res.getConfiguration().themeConfig;
+        int uiThemeMode = res.getConfiguration().uiThemeMode;
         if (newTheme != null &&
                 (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
             mCurrentTheme = (ThemeConfig)newTheme.clone();
             recreateStatusBar();
-        } else {
+        if (uiThemeMode != mCurrUiThemeMode) {
+            mCurrUiThemeMode = uiThemeMode;
+            //recreateStatusBar();
+        }
 
             if (mClearButton instanceof TextView) {
                 ((TextView)mClearButton).setText(context.getText(R.string.status_bar_clear_all_button));
             }
             loadDimens();
-        }
-
-        // detect theme ui mode change
-        int uiThemeMode = res.getConfiguration().uiThemeMode;
-        if (uiThemeMode != mCurrUiThemeMode) {
-            mCurrUiThemeMode = uiThemeMode;
-            recreateStatusBar();
         }
 
         // Update the QuickSettings container
