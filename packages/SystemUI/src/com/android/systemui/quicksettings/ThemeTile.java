@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 
-import com.android.internal.util.slim.ButtonsConstants;
 import com.android.internal.util.slim.SlimActions;
 
 import com.android.systemui.R;
@@ -52,7 +51,7 @@ public class ThemeTile extends QuickSettingsTile {
                 // will collapse as well automatically
                 // the drawer to reconstruct it or show
                 // the toast message if not possible
-                SlimActions.processAction(mContext, ButtonsConstants.ACTION_THEME_SWITCH, false);
+                SlimActions.processAction(mContext, TRDSConstant.ACTION_THEME_SWITCH, false);
             }
         };
 
