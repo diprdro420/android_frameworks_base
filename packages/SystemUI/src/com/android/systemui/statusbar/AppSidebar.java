@@ -111,7 +111,6 @@ public class AppSidebar extends FrameLayout {
     private boolean mFirstTouch = false;
     private boolean mHideTextLabels = false;
     private boolean mUseTab = false;
-    private boolean mFloatingWindow = false;
     private int mPosition = SIDEBAR_POSITION_RIGHT;
     private int mBarHeight;
 
@@ -549,10 +548,6 @@ public class AppSidebar extends FrameLayout {
                 return;
             }
         }
-        if (mFloatingWindow) {
-            intent.addFlags(Intent.FLAG_FLOATING_WINDOW);
-            mFloatingWindow = false;
-        }
         intent.setComponent(cn);
         try {
             mContext.startActivity(intent);
@@ -569,19 +564,6 @@ public class AppSidebar extends FrameLayout {
                 return false;
             }
             launchApplication((AppItemInfo)view.getTag(), true);
-            return true;
-        }
-    };
-
-    private OnLongClickListener mItemLongClickedListener = new OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View view) {
-            if (mState != SIDEBAR_STATE.OPENED || mFirstTouch) {
-                mFirstTouch = false;
-                return false;
-            }
-            mFloatingWindow = true;
-            launchApplication((AppItemInfo)view.getTag());
             return true;
         }
     };
