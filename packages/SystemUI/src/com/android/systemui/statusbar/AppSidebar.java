@@ -539,6 +539,9 @@ public class AppSidebar extends FrameLayout {
             } catch (android.os.RemoteException ex) {
                 // System is dead
             }
+            if (allowed) {
+                intent.addFlags(Intent.FLAG_FLOATING_WINDOW);
+            } else {
                 String text = mContext.getResources().getString(R.string.floating_mode_blacklisted_app);
                 int duration = Toast.LENGTH_LONG;
                 Toast.makeText(mContext, text, duration).show();
