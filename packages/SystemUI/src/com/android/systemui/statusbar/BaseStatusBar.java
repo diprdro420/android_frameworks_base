@@ -1387,41 +1387,6 @@ public abstract class BaseStatusBar extends SystemUI implements
             mWindowManager.removeView(mAppSidebar);
     }
 
-    public void addNavigationBarCallback(NavigationBarCallback callback) {
-        mNavigationCallbacks.add(callback);
-    }
-
-    protected void propagateNavigationIconHints(int hints) {
-        for (NavigationBarCallback callback : mNavigationCallbacks) {
-            callback.setNavigationIconHints(hints);
-        }
-    }
-
-    protected void propagateMenuVisibility(boolean showMenu) {
-        for (NavigationBarCallback callback : mNavigationCallbacks) {
-            callback.setMenuVisibility(showMenu);
-        }
-    }
-
-    protected void propagateDisabledFlags(int disabledFlags) {
-        for (NavigationBarCallback callback : mNavigationCallbacks) {
-            callback.setDisabledFlags(disabledFlags);
-        }
-    }
-
-    // Pie Controls
-    public void updatePieTriggerMask(int newMask, boolean lock) {
-        if (mPieController != null) {
-            mPieController.updatePieTriggerMask(newMask, lock);
-        }
-    }
-
-    public void restorePieTriggerMask() {
-        if (mPieController != null) {
-            mPieController.restorePieTriggerMask();
-        }
-    }
-
     protected WindowManager.LayoutParams getAppSidebarLayoutParams(int position) {
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 LayoutParams.WRAP_CONTENT,

@@ -3455,7 +3455,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         final Resources res = context.getResources();
 
         // detect theme change.
-        CustomTheme newTheme = res.getConfiguration().customTheme;
+        ThemeConfig newTheme = res.getConfiguration().themeconfig;
         int uiThemeMode = res.getConfiguration().uiThemeMode;
         if (newTheme != null &&
                 (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
