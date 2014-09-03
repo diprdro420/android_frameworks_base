@@ -1611,6 +1611,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
         boolean updateRotation = false;
+        final Resources res = mContext.getResources();
         synchronized (mLock) {
             mEndcallBehavior = Settings.System.getIntForUser(resolver,
                     Settings.System.END_BUTTON_BEHAVIOR,
@@ -1724,8 +1725,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mNavigationBarHeightForRotation[mUpsideDownRotation] = mNavigationBarHeight;
 
                 mNavigationBarHeightForRotation[mLandscapeRotation] =
-                mNavigationBarHeightForRotation[mSeascapeRotation] = res.getDimensionPixelSize(
-                        com.android.internal.R.dimen.navigation_bar_height_landscape);
+                mNavigationBarHeightForRotation[mSeascapeRotation] =
 
                 // Width of the navigation bar when presented vertically along one side
                 mNavigationBarWidthForRotation[mPortraitRotation] =
