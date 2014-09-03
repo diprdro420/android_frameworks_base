@@ -252,7 +252,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mSettingsPanelGravity;
     private TilesChangedObserver mTilesChangedObserver;
     private SettingsObserver mSettingsObserver;
-    private DevForceNavbarObserver mDevForceNavbarObserver;
 
     // Ribbon settings
     private boolean mHasQuickAccessSettings;
@@ -420,45 +419,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         }
     }
-
-    class DevForceNavbarObserver extends ContentObserver {
-        DevForceNavbarObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.DEV_FORCE_SHOW_NAVBAR), false, this);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            boolean visible = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.DEV_FORCE_SHOW_NAVBAR, 0, UserHandle.USER_CURRENT) == 1;
-            if (visible) {
-                forceAddNavigationBar();
-            } else {
-                removeNavigationBar();
-            }
-        }
-    }
-
-    private void forceAddNavigationBar() {
-        // If we have no Navbar view and we should have one, create it
-        if (mNavigationBarView != null) {
-            return;
-        }
-
-        mNavigationBarView =
-                (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
-
-        mNavigationBarView.setDisabledFlags(mDisabled);
-        mNavigationBarView.setBar(this);
-        mNavigationBarView.updateResources(getNavbarThemedResources());
-        addNavigationBar();
-    }
-
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
     private ContentObserver mUserSetupObserver = new ContentObserver(new Handler()) {
@@ -558,17 +518,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
-
-        // Developer options - Force Navigation bar
-        try {
-            boolean needsNav = mWindowManagerService.needsNavigationBar();
-            if (!needsNav) {
-                mDevForceNavbarObserver = new DevForceNavbarObserver(mHandler);
-                mDevForceNavbarObserver.observe();
-            }
-        } catch (RemoteException ex) {
-            // no window manager? good luck with that
-        }
 
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext);
@@ -699,27 +648,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         updateShowSearchHoldoff();
-
-        try {
-            boolean showNav = mWindowManagerService.hasNavigationBar();
-            if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
-            if (showNav && !mRecreating) {
-                mNavigationBarView =
-                    (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
-                mNavigationBarView.updateResources(getNavbarThemedResources());
-
-                mNavigationBarView.setDisabledFlags(mDisabled);
-                mNavigationBarView.setBar(this);
-                mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        checkUserAutohide(v, event);
-                        return false;
-                    }});
-            }
-        } catch (RemoteException ex) {
-            // no window manager? good luck with that
+        if (mNavigationBarView == null) {
+            mNavigationBarView =
+                (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
+            mNavigationBarView.updateResources(getNavbarThemedResources());
         }
+
+        mNavigationBarView.setDisabledFlags(mDisabled);
+        mNavigationBarView.setBar(this);
+        mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                checkUserAutohide(v, event);
+                return false;
+            }
+        });
 
         if (mRecreating) {
             removeSidebarView();
@@ -1285,14 +1228,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         prepareNavigationBarView();
 
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
-    }
-
-    private void removeNavigationBar() {
-        if (DEBUG) Log.d(TAG, "removeNavigationBar: about to remove " + mNavigationBarView);
-        if (mNavigationBarView == null) return;
-
-        mWindowManager.removeView(mNavigationBarView);
-        mNavigationBarView = null;
     }
 
     private void repositionNavigationBar() {
@@ -2620,9 +2555,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNavigationIconHints = hints;
 
-        if (mNavigationBarView != null) {
-            mNavigationBarView.setNavigationIconHints(hints);
-        }
         checkBarModes();
     }
 
@@ -2862,9 +2794,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void topAppWindowChanged(boolean showMenu) {
         if (DEBUG) {
             Log.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
-        }
-        if (mNavigationBarView != null) {
-            mNavigationBarView.setMenuVisibility(showMenu);
         }
 
         // See above re: lights-out policy for legacy apps.
@@ -3749,6 +3678,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mRowHeight =  res.getDimensionPixelSize(R.dimen.notification_row_min_height);
 
         if (false) Log.v(TAG, "updateResources");
+    }
+
+    @Override
+    public void setButtonDrawable(int buttonId, int iconId) {
+        mNavigationBarView.setButtonDrawable(buttonId, iconId);
     }
     //
     // tracing

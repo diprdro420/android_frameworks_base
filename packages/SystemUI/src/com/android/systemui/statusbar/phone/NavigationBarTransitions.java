@@ -111,13 +111,6 @@ public final class NavigationBarTransitions extends BarTransitions {
         setKeyButtonViewQuiescentAlpha(NavbarEditor.NAVBAR_MENU_BIG, alpha, animate);
         setKeyButtonViewQuiescentAlpha(mView.getSearchLight(), KEYGUARD_QUIESCENT_ALPHA, animate);
         setKeyButtonViewQuiescentAlpha(mView.getCameraButton(), KEYGUARD_QUIESCENT_ALPHA, animate);
-<<<<<<< HEAD
-        setKeyButtonViewQuiescentAlpha(mView.getApplicationWidgetButton(),
-                KEYGUARD_QUIESCENT_ALPHA, animate);
-||||||| merged common ancestors
-=======
-        setKeyButtonViewQuiescentAlpha(mView.getNotifsButton(), KEYGUARD_QUIESCENT_ALPHA, animate);
->>>>>>> Add "show all notifications" navbar button
         applyBackButtonQuiescentAlpha(mode, animate);
 
         // apply to lights out
@@ -145,12 +138,6 @@ public final class NavigationBarTransitions extends BarTransitions {
         float backAlpha = 0;
         backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getSearchLight());
         backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getCameraButton());
-<<<<<<< HEAD
-        backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getApplicationWidgetButton());
-||||||| merged common ancestors
-=======
-        backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getNotifsButton());
->>>>>>> Add "show all notifications" navbar button
         backAlpha = maxVisibleQuiescentAlpha(backAlpha,
                 mView.findButton(NavbarEditor.NAVBAR_HOME));
         backAlpha = maxVisibleQuiescentAlpha(backAlpha,
@@ -188,9 +175,7 @@ public final class NavigationBarTransitions extends BarTransitions {
     public void setContentVisible(boolean visible) {
         final float alpha = visible ? 1 : 0;
         fadeContent(mView.getCameraButton(), alpha);
-        fadeContent(mView.getNotifsButton(), alpha);
         fadeContent(mView.getSearchLight(), alpha);
-        fadeContent(mView.getApplicationWidgetButton(), alpha);
     }
 
     private void fadeContent(View v, float alpha) {
