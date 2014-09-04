@@ -498,11 +498,6 @@ public class NavigationBarView extends LinearLayout {
         setDisabledFlags(mDisabledFlags, true);
     }
 
-    @Override
-    public void setNavigationIconHints(int hints) {
-        setNavigationIconHints(hints, false);
-    }
-
     public void setNavigationIconHints(int hints, boolean force) {
         if (!force && hints == mNavigationIconHints) return;
         final boolean backAlt = (hints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0;
@@ -659,11 +654,6 @@ public class NavigationBarView extends LinearLayout {
         }
     }
 
-    @Override
-    public void setMenuVisibility(final boolean show) {
-        setMenuVisibility(show, false);
-    }
-
     public void setMenuVisibility(final boolean show, final boolean force) {
         if (!force && mShowMenu == show) return;
 
@@ -731,9 +721,6 @@ public class NavigationBarView extends LinearLayout {
                 hasCamera = true;
                 cameraButton.setOnTouchListener(onTouchListener);
                 cameraButton.setOnClickListener(onClickListener);
-            }
-            if (notifsButton != null) {
-                notifsButton.setOnClickListener(mNavBarClickListener);
             }
             if (searchLight != null) {
                 searchLight.setOnClickListener(onClickListener);

@@ -647,11 +647,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNavigationBarView.updateResources(getNavbarThemedResources());
         }
 
-        if (mRecreating) {
-            removeSidebarView();
-        }
-        addSidebarView();
-
         mNavigationBarView.setDisabledFlags(mDisabled);
         mNavigationBarView.setBar(this);
         addNavigationBarCallback(mNavigationBarView);
@@ -2415,8 +2410,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNavigationIconHints = hints;
 
-        propagateNavigationIconHints(hints);
-
         checkBarModes();
     }
 
@@ -3449,11 +3442,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mRowHeight =  res.getDimensionPixelSize(R.dimen.notification_row_min_height);
 
         if (false) Log.v(TAG, "updateResources");
-    }
-
-    @Override
-    public void setButtonDrawable(int buttonId, int iconId) {
-        mNavigationBarView.setButtonDrawable(buttonId, iconId);
     }
     //
     // tracing
