@@ -300,6 +300,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private HeadsUpNotificationView mHeadsUpNotificationView;
     private int mHeadsUpNotificationDecay;
     private int mHeadsUpNotificationFSDecay;
+    private int mHeadsUpCustomBg;
+    private int mHeadsUpCustomText;
 
     // on-screen navigation buttons
     private NavigationBarView mNavigationBarView = null;
@@ -414,15 +416,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.PIE_CONTROLS), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_TIMEOUT), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_FS_TIMEOUT), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BG_COLOR), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_TEXT_COLOR), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_BG_COLOR), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
                     UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.HEADS_UP_TIMEOUT), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.HEADS_UP_FS_TIMEOUT), false, this);
             updateSettings();
             updateClockLocation();
         }
@@ -1402,13 +1410,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mUseHeadsUp && shouldInterrupt(notification) && mStatusBarView.panelsEnabled()) {
             if (DEBUG) Log.d(TAG, "launching notification in heads up mode");
             Entry interruptionCandidate = new Entry(key, notification, null);
-            if (inflateViews(interruptionCandidate, mHeadsUpNotificationView.getHolder())) {
+            if (inflateViews(interruptionCandidate,
+                mHeadsUpNotificationView.getHolder(), mHeadsUpCustomText)) {
                 mInterruptingNotificationTime = System.currentTimeMillis();
                 mInterruptingNotificationEntry = interruptionCandidate;
                 shadeEntry.setInterruption();
 
                 // 1. Populate mHeadsUpNotificationView
-                mHeadsUpNotificationView.setNotification(mInterruptingNotificationEntry);
+                mHeadsUpNotificationView.setNotification(
+                        mInterruptingNotificationEntry, mHeadsUpCustomBg);
 
                 // 2. Animate mHeadsUpNotificationView in
                 mHandler.sendEmptyMessage(MSG_SHOW_HEADS_UP);
@@ -3500,6 +3510,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mHeadsUpNotificationFSDecay = Settings.System.getInt(
                     resolver, Settings.System.HEADS_UP_FS_TIMEOUT, 700);
+
+        mHeadsUpCustomBg = Settings.System.getInt(
+                    resolver, Settings.System.HEADS_UP_BG_COLOR, 0x00ffffff);
+
+        mHeadsUpCustomText = Settings.System.getInt(
+                    resolver, Settings.System.HEADS_UP_TEXT_COLOR, 0);
     }
 
     private void resetUserSetupObserver() {
