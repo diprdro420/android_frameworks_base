@@ -116,6 +116,10 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void setButtonDrawable(int buttonId, int iconId) {
+        mCallbacks.setButtonDrawable(buttonId, iconId);
+    }
+
     public void removeIcon(int index) {
         synchronized (mList) {
             int what = MSG_ICON | index;
