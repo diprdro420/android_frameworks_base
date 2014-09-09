@@ -309,8 +309,6 @@ public class QuickSettingsController {
                 qs = new CompassTile(mContext, this);
             } else if (tile.equals(TILE_HEADS_UP)) {
                 qs = new HeadsUpTile(mContext, this);
-            } else if (tile.equals(TILE_THEME)) {
-                qs = new ThemeTile(mContext, this); 
             } else if (tile.equals(TILE_ONTHEGO)) {
                 qs = new OnTheGoTile(mContext, this);
             }
