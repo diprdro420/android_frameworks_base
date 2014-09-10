@@ -685,6 +685,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         });
 
+        if (mRecreating) {
+            removeSidebarView();
+        }
+        addSidebarView();
+
         // Setup pie container if enabled
         attachPieContainer(isPieEnabled());
 
@@ -3266,8 +3271,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mSidebarPosition = sidebarPosition;
             mWindowManager.updateViewLayout(mAppSidebar, getAppSidebarLayoutParams(sidebarPosition));
         }
-
-        updateCustomHeaderStatus();
 
         mHeadsUpNotificationDecay = Settings.System.getInt(
                     resolver, Settings.System.HEADS_UP_TIMEOUT,
