@@ -34,6 +34,7 @@ import android.content.pm.IPackageDataObserver;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.res.ThemeConfig;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
@@ -77,6 +78,7 @@ import android.widget.TextView;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusBarIconList;
+import com.android.systemui.statusbar.phone.Ticker;
 import com.android.internal.util.cm.SpamFilter;
 import com.android.internal.util.cm.SpamFilter.SpamContract.NotificationTable;
 import com.android.internal.util.cm.SpamFilter.SpamContract.PackageTable;
@@ -232,10 +234,6 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected int mSidebarPosition;
 
     private boolean mCustomRecent = true;
-
-    public Ticker getTicker() {
-        return mTicker;
-    }
 
     public IStatusBarService getService() {
         return mBarService;
