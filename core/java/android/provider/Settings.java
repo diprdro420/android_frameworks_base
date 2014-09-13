@@ -5273,26 +5273,6 @@ public final class Settings {
             "lock_before_unlock";
 
         /**
-         * Whether shaking the device enables a secure screen
-         * @hide
-         */
-        public static final String LOCK_SHAKE_TEMP_SECURE = "lock_shake_temp_secure";
-
-        /**
-         * When LOCK_SHAKE_TEMP_SECURE is enabled, the time
-         * before a secure lock will auto-engage in milliseconds
-         * @hide
-         */
-        public static final String LOCK_SHAKE_SECURE_TIMER = "lock_shake_secure_timer";
-
-        /**
-         * Whether the device will unlock itself or not upon completeion
-         * of the insecure lock challenge
-         * @hide
-         */
-        public static final String LOCK_TEMP_SECURE_MODE = "lock_temp_secure_mode";
-
-        /**
          * The Logging ID (a unique 64-bit value) as a hex string.
          * Used as a pseudonymous identifier for logging.
          * @deprecated This identifier is poorly initialized and has
