@@ -431,13 +431,11 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
     }
 
     void doTransition(View view, float to) {
-        if (view != null) {
-            if (mAnim != null) {
-                mAnim.cancel();
-            }
-            mAnim = ObjectAnimator.ofFloat(view, "alpha", to);
-            mAnim.start();
+        if (mAnim != null) {
+            mAnim.cancel();
         }
+        mAnim = ObjectAnimator.ofFloat(view, "alpha", to);
+        mAnim.start();
     }
 
     public void setKeyguardCallback(KeyguardSecurityCallback callback) {
