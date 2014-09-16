@@ -2147,4 +2147,5 @@
   <java-symbol type="style" name="Animation.Toast.GrowFadeCenter" />
   <java-symbol type="style" name="Animation.Toast.GrowFadeBottom" />
   <java-symbol type="style" name="Animation.Toast.Translucent" />
+>>>>>>> 8297512394c38665005329ab59f570e20c84df01
 </resources>
