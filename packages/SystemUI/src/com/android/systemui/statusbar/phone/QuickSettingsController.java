@@ -111,13 +111,8 @@ import com.android.systemui.quicksettings.RemoteDisplayTile;
 import com.android.systemui.quicksettings.WiFiTile;
 import com.android.systemui.quicksettings.WifiAPTile;
 import com.android.systemui.statusbar.phone.QuickSettingsContainerView.QSSize;
-<<<<<<< HEAD
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.quicksettings.OnTheGoTile;
-||||||| merged common ancestors
-=======
-import com.android.systemui.quicksettings.OnTheGoTile;
->>>>>>> 8297512394c38665005329ab59f570e20c84df01
 
 import java.util.ArrayList;
 import java.util.HashMap;
