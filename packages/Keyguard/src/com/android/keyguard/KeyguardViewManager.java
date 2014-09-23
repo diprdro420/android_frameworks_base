@@ -133,6 +133,8 @@ public class KeyguardViewManager {
 
     private Bitmap mBlurredImage = null;
     private int mLastRotation = 0;
+    
+    private int mBlurRadius = 14;
 
     private KeyguardUpdateMonitorCallback mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() {
         @Override
@@ -172,7 +174,8 @@ public class KeyguardViewManager {
                     new BitmapDrawable(mContext.getResources(), bmp) : null);
         updateShowWallpaper(mKeyguardHost.shouldShowWallpaper() && bmp == null);
     }
-
+    mBlurRadius = Settings.System.getInt(mContext.getContentResolver(),
+			Settings.System.LOCKSCREEN_BLUR_RADIUS, mBlurRadius);
     public interface ShowListener {
         void onShown(IBinder windowToken);
     };
@@ -238,6 +241,8 @@ public class KeyguardViewManager {
                 Settings.System.ACCELEROMETER_ROTATION, 1) != 0;
         return SystemProperties.getBoolean("lockscreen.rot_override",false)
                 || (enableLockScreenRotation && enableAccelerometerRotation);
+        resolver.registerContentObserver(Settings.System.getUriFor(
+				Settings.System.LOCKSCREEN_BLUR_RADIUS), false, this);
     }
 
     private boolean shouldEnableTranslucentDecor() {
@@ -248,7 +253,11 @@ public class KeyguardViewManager {
 
     public void setBackgroundBitmap(Bitmap bmp) {
         if (bmp != null) {
-            mBlurredImage = blurBitmap(bmp, bmp.getWidth() < 900 ? 14: 18);
+            if (mBlurRadius > 0) {
+				mBlurredImage = blurBitmap(bmp, mBlurRadius);
+			} else {
+				mBlurredImage = bmp;
+			}
         } else {
             mBlurredImage = null;
         }

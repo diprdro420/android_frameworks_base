@@ -4195,6 +4195,12 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_SEE_THROUGH = "lockscreen_see_through";
+        
+        /**
+		 * Allows setting the radius for blur
+		 * @hide
+		 */
+		public static final String LOCKSCREEN_BLUR_RADIUS = "lockscreen_blur_radius";
 
         /**
          * Battery warning preferences
