@@ -207,7 +207,6 @@ public class KeyguardViewManager {
         }
     }
 
->>>>>>> 3fc11f3... Lockscreen Notifications [1/2]
     /**
      * @param context Used to create views.
      * @param viewManager Keyguard will be attached to this.
