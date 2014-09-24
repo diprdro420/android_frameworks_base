@@ -168,11 +168,33 @@ public class KeyguardViewManager {
                     new BitmapDrawable(mContext.getResources(), bmp) : null);
         updateShowWallpaper(mKeyguardHost.shouldShowWallpaper() && bmp == null);
     }
-    mBlurRadius = Settings.System.getInt(mContext.getContentResolver(),
-			Settings.System.LOCKSCREEN_BLUR_RADIUS, mBlurRadius);
+
     public interface ShowListener {
         void onShown(IBinder windowToken);
     };
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_BLUR_RADIUS), false, this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+            mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
+        }
+    }
+
+    private void updateSettings() {
+        mBlurRadius = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_BLUR_RADIUS, mBlurRadius);
+    }
 
     /**
      * @param context Used to create views.
@@ -194,6 +216,11 @@ public class KeyguardViewManager {
             // make sure there are exactly 4 dimensions provided, or ignore the values
             mSmartCoverCoords = null;
         }
+
+        SettingsObserver observer = new SettingsObserver(new Handler());
+        observer.observe();
+
+        updateSettings();
     }
 
     /**
@@ -204,6 +231,7 @@ public class KeyguardViewManager {
         if (DEBUG) Log.d(TAG, "show(); mKeyguardView==" + mKeyguardView);
 
         boolean enableScreenRotation = shouldEnableScreenRotation();
+        mLastRotation = 0;
 
         maybeCreateKeyguardLocked(enableScreenRotation, false, options);
         maybeEnableScreenRotation(enableScreenRotation);
@@ -235,8 +263,6 @@ public class KeyguardViewManager {
                 Settings.System.ACCELEROMETER_ROTATION, 1) != 0;
         return SystemProperties.getBoolean("lockscreen.rot_override",false)
                 || (enableLockScreenRotation && enableAccelerometerRotation);
-        resolver.registerContentObserver(Settings.System.getUriFor(
-				Settings.System.LOCKSCREEN_BLUR_RADIUS), false, this);
     }
 
     private boolean shouldEnableTranslucentDecor() {
@@ -248,10 +274,10 @@ public class KeyguardViewManager {
     public void setBackgroundBitmap(Bitmap bmp) {
         if (bmp != null) {
             if (mBlurRadius > 0) {
-				mBlurredImage = blurBitmap(bmp, mBlurRadius);
-			} else {
-				mBlurredImage = bmp;
-			}
+                mBlurredImage = blurBitmap(bmp, mBlurRadius);
+            } else {
+                mBlurredImage = bmp;
+            }
         } else {
             mBlurredImage = null;
         }
@@ -482,7 +508,7 @@ public class KeyguardViewManager {
         }
 
         public boolean shouldShowWallpaper() {
-            return mUserBackground == null;
+            return mUserBackground == null && mBlurredImage == null;
         }
 
     }
