@@ -4351,10 +4351,6 @@ public class BatteryStatsImpl extends BatteryStats {
         public StopwatchTimer getWakeTimerLocked(String name, int type) {
             Wakelock wl = mWakelockStats.get(name);
             if (wl == null) {
-				// protect from unnamed wakelocks
-				if (name == null) {
-					name = "undefined-wakelock-timer";
-				}
                 final int N = mWakelockStats.size();
                 if (N > MAX_WAKELOCKS_PER_UID) {
                     name = BATCHED_WAKELOCK_NAME;
@@ -4820,7 +4816,12 @@ public class BatteryStatsImpl extends BatteryStats {
     public void setBatteryState(int status, int health, int plugType, int level,
             int temp, int volt) {
         synchronized(this) {
-			boolean onBattery = plugType == BATTERY_PLUGGED_NONE;
+            // We need to add a extra check over the status because of dock batteries
+            // PlugType doesn't means that the dock battery is charging (some devices
+            // doesn't charge under dock usb)
+            boolean onBattery = plugType == BATTERY_PLUGGED_NONE &&
+                    (status != BatteryManager.BATTERY_STATUS_CHARGING ||
+                    status != BatteryManager.BATTERY_STATUS_FULL);
             int oldStatus = mHistoryCur.batteryStatus;
             if (!mHaveBatteryLevel) {
                 mHaveBatteryLevel = true;

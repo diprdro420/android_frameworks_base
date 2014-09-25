@@ -152,9 +152,9 @@ public class QuickSettingsTile implements View.OnClickListener {
                 tv.setPadding(0, mTileTextPadding, 0, 0);
             }
         }
-        ImageView image = (ImageView) mTile.findViewById(R.id.image);
-		if (image != null) {
-			image.setImageResource(mDrawable);
+        View image = getImageView();
+        if (image != null && image instanceof ImageView) {
+            ((ImageView) image).setImageResource(mDrawable);
         }
     }
 
