@@ -179,8 +179,4 @@
     <string name="halo_tutorial1">This is HALO</string>
     <string name="halo_tutorial2">Move me: double tap &amp; drag</string>
     <string name="halo_tutorial3">Browse tasks: Horizontal drag</string>
-    
-    <!-- QS Battery Tile -->
-    <string name="quick_settings_battery_charging">Charging</string>
-    <string name="quick_settings_battery_discharging">Discharging</string>
 </resources>

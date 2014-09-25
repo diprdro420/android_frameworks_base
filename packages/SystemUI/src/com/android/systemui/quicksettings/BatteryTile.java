@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  * Copyright (C) 2013-2014 The CyanogenMod Project
  *
@@ -15,68 +14,26 @@
  * limitations under the License.
  */
 
-||||||| parent of fa713ab... fb: add Battery Styles the new way 1/2
-=======
-/*
- * Copyright (C) 2012 The Android Open Source Project
- * Copyright (C) 2013 CyanogenMod Project
- * Copyright (C) 2013 The SlimRoms Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
->>>>>>> fa713ab... fb: add Battery Styles the new way 1/2
 package com.android.systemui.quicksettings;
 
 import android.content.Context;
-import android.content.ContentResolver;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.os.UserHandle;
 import android.provider.Settings;
-||||||| parent of fa713ab... fb: add Battery Styles the new way 1/2
-import android.provider.Settings;
-import android.util.TypedValue;
-=======
->>>>>>> fa713ab... fb: add Battery Styles the new way 1/2
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.BatteryManager;
-import android.os.UserHandle;
-import android.provider.Settings;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 
-<<<<<<< HEAD
-||||||| parent of fa713ab... fb: add Battery Styles the new way 1/2
-import com.android.systemui.R;
-=======
-import com.android.systemui.BatteryMeterView;
-import com.android.systemui.BatteryCircleMeterView;
-import com.android.systemui.R;
->>>>>>> fa713ab... fb: add Battery Styles the new way 1/2
 import com.android.systemui.statusbar.phone.QuickSettingsContainerView;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.QuickSettingsController;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback;
 
-public class BatteryTile extends QuickSettingsTile implements BatteryStateChangeCallback {
+public class BatteryTile extends QuickSettingsTile implements BatteryStateChangeCallback{
     private BatteryController mController;
 
     private int mBatteryLevel = 0;
@@ -87,10 +44,7 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
 
         mController = controller;
 
-        mBatteryLevel = mController.getBatteryLevel();
-        mPluggedIn = mController.isBatteryStatusCharging();
-
-        mOnClick = new OnClickListener() {
+        mOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isFlipTilesEnabled()) {
@@ -99,27 +53,6 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
                 startSettingsActivity(Intent.ACTION_POWER_USAGE_SUMMARY);
             }
         };
-
-        mOnLongClick = new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.setClassName("com.android.settings",
-                    "com.android.settings.Settings$BatteryIconStyleSettingsActivity");
-                startSettingsActivity(intent);
-                return true;
-            }
-        };
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_COLOR), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED), this);
     }
 
     @Override
@@ -136,21 +69,6 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
     }
 
     @Override
-    public void onChangeUri(ContentResolver resolver, Uri uri) {
-        BatteryMeterView battery =
-                (BatteryMeterView) mTile.findViewById(R.id.image);
-        BatteryCircleMeterView circleBattery =
-                (BatteryCircleMeterView) mTile.findViewById(R.id.circle_battery);
-        if (circleBattery != null) {
-            circleBattery.updateSettings();
-        }
-        if (battery != null) {
-            battery.updateSettings();
-        }
-        updateResources();
-    }
-
-    @Override
     public void onBatteryLevelChanged(int level, boolean pluggedIn) {
         mBatteryLevel = level;
         mPluggedIn = pluggedIn;
@@ -164,26 +82,13 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
     }
 
     private synchronized void updateTile() {
-        int batteryStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
-            Settings.System.STATUS_BAR_BATTERY, 0, UserHandle.USER_CURRENT);
-        boolean batteryHasPercent = batteryStyle == BatteryMeterView.BATTERY_STYLE_ICON_PERCENT
-            || batteryStyle == BatteryMeterView.BATTERY_STYLE_PERCENT
-            || batteryStyle == BatteryMeterView.BATTERY_STYLE_CIRCLE_PERCENT
-            || batteryStyle == BatteryMeterView.BATTERY_STYLE_DOTTED_CIRCLE_PERCENT;
         if (mBatteryLevel == 100) {
             mLabel = mContext.getString(R.string.quick_settings_battery_charged_label);
         } else {
-            if (!batteryHasPercent) {
-                mLabel = mPluggedIn
-                    ? mContext.getString(R.string.quick_settings_battery_charging_label,
-                            mBatteryLevel)
-                    : mContext.getString(R.string.status_bar_settings_battery_meter_format,
-                            mBatteryLevel);
-            } else {
-                mLabel = mPluggedIn
-                    ? mContext.getString(R.string.quick_settings_battery_charging)
-                    : mContext.getString(R.string.quick_settings_battery_discharging);
-            }
+            int resId = mPluggedIn
+                ? R.string.quick_settings_battery_charging_label
+                : R.string.status_bar_settings_battery_meter_format;
+            mLabel = mContext.getString(resId, mBatteryLevel);
         }
     }
 }
