@@ -111,7 +111,7 @@ public class MusicTile extends QuickSettingsTile {
     private void updateTile() {
 		mMusicTileMode = Settings.System.getIntForUser(mContext.getContentResolver(),
 				Settings.System.MUSIC_TILE_MODE, 3,
-				UserHandle.USER_CURRENT)
+				UserHandle.USER_CURRENT);
         final ImageView background =
                 (ImageView) mTile.findViewById(R.id.background);
         if (background != null) {

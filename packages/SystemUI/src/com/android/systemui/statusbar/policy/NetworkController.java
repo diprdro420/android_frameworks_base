@@ -1193,7 +1193,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         int N;
         final boolean emergencyOnly = isEmergencyOnly();
         final String customLabel = Settings.System.getString(mContext.getContentResolver(),
-				Settings.System.CUSTOM_CARRIER_LABEL)
+				Settings.System.CUSTOM_CARRIER_LABEL);
 
         if (!mHasMobileDataFeature) {
             mDataSignalIconId = mPhoneSignalIconId = 0;
