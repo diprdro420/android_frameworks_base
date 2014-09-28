@@ -121,6 +121,8 @@ public class KeyguardTouchDelegate {
         if (service != null) {
             try {
                 service.dispatchApplicationWidgetEvent(event);
+                Slog.e(TAG, "dispatch!");
+                service.dispatch(event);
                 return true;
             } catch (RemoteException e) {
                 // What to do?
