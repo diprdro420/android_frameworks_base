@@ -4107,6 +4107,7 @@ public final class Settings {
          */
         @Deprecated
         public static final String WIFI_WATCHDOG_PING_TIMEOUT_MS =
+        
             Secure.WIFI_WATCHDOG_PING_TIMEOUT_MS;
 
         /**
@@ -4171,6 +4172,13 @@ public final class Settings {
          * @hide
          */
         public static final String APP_SIDEBAR_SHOW_TRIGGER = "app_sidebar_show_trigger";
+        
+        /**
+		 * Holds the text for the Carrier label. An empty string
+		 * will bring the default text back.
+		 * @hide
+		 */
+		public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
     }
 
     /**
