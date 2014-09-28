@@ -3075,12 +3075,12 @@ public final class Settings {
          * @hide
          */
         public static final String QUICK_SETTINGS_RIBBON_TILES = "quick_settings_ribbon_tiles";
-        
-        /**
-		 * Quick Settings music tile mode
-		 * @hide
-		 */
-		public static final String MUSIC_TILE_MODE = "music_tile_mode";
+
+       /**
+         * Quick Settings music tile mode
+         * @hide
+         */
+        public static final String MUSIC_TILE_MODE = "music_tile_mode";
 
         /**
          * Whether to hide the notification screen after clicking on a widget
@@ -3867,6 +3867,12 @@ public final class Settings {
          * @hide
          */
         public static final String BATTERY_AROUND_LOCKSCREEN_RING = "battery_around_lockscreen_ring";
+        
+        /**
+		 * Show call recording button in incallui (default = 0)
+		 * @hide
+		 */
+		public static final String ALLOW_CALL_RECORDING = "allow_call_recording";
 
         /**
          * Whether to use the custom status bar header or not
@@ -4224,7 +4230,6 @@ public final class Settings {
          */
         @Deprecated
         public static final String WIFI_WATCHDOG_PING_TIMEOUT_MS =
-        
             Secure.WIFI_WATCHDOG_PING_TIMEOUT_MS;
 
         /**
@@ -4289,7 +4294,7 @@ public final class Settings {
          * @hide
          */
         public static final String APP_SIDEBAR_SHOW_TRIGGER = "app_sidebar_show_trigger";
-        
+
         /**
          * Holds the text for the Carrier label. An empty string
          * will bring the default text back.
