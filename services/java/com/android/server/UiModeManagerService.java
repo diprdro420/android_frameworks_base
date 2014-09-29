@@ -93,7 +93,6 @@ final class UiModeManagerService extends IUiModeManager.Stub
     private int mCurUiMode = 0;
     private int mSetUiMode = 0;
     private int mSetUiThemeMode = 0;
-
     private boolean mAllowConfigChange = true;
     private float mCurrentSwitchLevel = DARK_CONDITION;
 
@@ -333,7 +332,7 @@ final class UiModeManagerService extends IUiModeManager.Stub
 
             if (mAllowConfigChange) {
                 mAllowConfigChange = false;
-                mHandler.postDelayed(mReleaseUiThemeModeBlock, 5000);
+                mHandler.postDelayed(mReleaseUiThemeModeBlock, 3000);
                 synchronized (mLock) {
                     if (mSystemReady) {
                         sendConfigurationLocked();
@@ -528,10 +527,23 @@ final class UiModeManagerService extends IUiModeManager.Stub
         if (mSetUiMode != mConfiguration.uiMode
                 || mSetUiThemeMode != mConfiguration.uiThemeMode) {
             mSetUiMode = mConfiguration.uiMode;
-            mSetUiThemeMode = mConfiguration.uiThemeMode;
-            Settings.Secure.putIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.UI_THEME_MODE, mSetUiThemeMode,
-                    UserHandle.USER_CURRENT);
+
+            if (mSetUiThemeMode != mConfiguration.uiThemeMode) {
+                final IStatusBarService barService = IStatusBarService.Stub.asInterface(
+                        ServiceManager.getService(Context.STATUS_BAR_SERVICE));
+                try {
+                    if (barService != null) {
+                        barService.collapsePanels();
+                    }
+                } catch (RemoteException e) {
+                    Slog.w(TAG, "Failure communicating with statusbar service", e);
+                }
+
+                mSetUiThemeMode = mConfiguration.uiThemeMode;
+                Settings.Secure.putIntForUser(mContext.getContentResolver(),
+                        Settings.Secure.UI_THEME_MODE, mSetUiThemeMode,
+                        UserHandle.USER_CURRENT);
+            }
 
             try {
                 ActivityManagerNative.getDefault().updateConfiguration(mConfiguration);
