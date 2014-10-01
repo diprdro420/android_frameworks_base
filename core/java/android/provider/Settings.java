@@ -4735,6 +4735,27 @@ public final class Settings {
          * @hide
          */
         public static final String NON_INTRUSIVE_INCALL = "non_intrusive_incall";
+
+        /**
+         * Battery bar height
+         *
+         * @hide
+         */
+        public static final String BATTERY_BAR_HEIGHT = "battery_bar_height";
+
+        /**
+         * Battery bar left color
+         *
+         * @hide
+         */
+        public static final String BATTERY_BAR_LEFT_COLOR = "battery_bar_left_color";
+
+        /**
+         * Battery bar right color
+         *
+         * @hide
+         */
+        public static final String BATTERY_BAR_RIGHT_COLOR = "battery_bar_right_color";
     }
 
     /**
