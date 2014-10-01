@@ -24,7 +24,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.BatteryManager;
 import android.os.Handler;
@@ -44,7 +43,6 @@ public class BatteryBar extends View {
     // state variables
     private boolean mAttached;      // whether or not attached to a window
     private boolean mActivated;     // whether or not activated due to system settings
-    private boolean mBatteryPlugged;// whether or not battery is currently plugged
     private int     mBatteryStatus; // current battery status
     private int     mLevel;         // current battery level
     private int     mAnimOffset;    // current level of charging animation
@@ -52,7 +50,6 @@ public class BatteryBar extends View {
 
     private int     mLowColor;
     private int     mHighColor;
-    private Paint   mPaint;
 
     private int     mHeight;
 
@@ -62,7 +59,7 @@ public class BatteryBar extends View {
     // runnable to invalidate view via mHandler.postDelayed() call
     private final Runnable mInvalidate = new Runnable() {
         public void run() {
-            if(mActivated && mAttached) {
+            if (mActivated && mAttached) {
                 invalidate();
             }
         }
@@ -78,15 +75,31 @@ public class BatteryBar extends View {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.BATTERY_BAR_HEIGHT), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.BATTERY_BAR_LEFT_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.BATTERY_BAR_RIGHT_COLOR), false, this);
             onChange(true);
         }
 
         @Override
         public void onChange(boolean selfChange) {
-            int batteryStyle = (Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.STATUS_BAR_BATTERY, 0));
+            Resources res = getResources();
+            ContentResolver resolver = mContext.getContentResolver();
 
-            mActivated = (batteryStyle == 7);
+            mActivated = Settings.System.getInt(resolver,
+                    Settings.System.STATUS_BAR_BATTERY, 0) == 7;
+
+            mHeight = Settings.System.getInt(resolver, Settings.System.BATTERY_BAR_HEIGHT,
+                    res.getDimensionPixelSize(com.android.systemui.R.dimen.battery_bar_height));
+            mLowColor = Settings.System.getInt(resolver, Settings.System.BATTERY_BAR_LEFT_COLOR,
+                    res.getColor(R.color.holo_red_light));
+            mHighColor = Settings.System.getInt(resolver, Settings.System.BATTERY_BAR_RIGHT_COLOR,
+                    res.getColor(R.color.holo_blue_light));
+
+            mGradientColors[0] = mLowColor;
 
             setVisibility(mActivated && isBatteryPresent() ? View.VISIBLE : View.GONE);
             if (mBatteryReceiver != null) {
@@ -166,28 +179,14 @@ public class BatteryBar extends View {
         mContext = context;
         mHandler = new Handler();
 
+        mGradientColors = new int[2];
+
         SettingsObserver settingsObserver = new SettingsObserver(mHandler);
         settingsObserver.observe();
         mBatteryReceiver = new BatteryReceiver(mContext);
 
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setDither(true);
-        mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-
-        Resources res = getResources();
-
-        mHeight = res.getDimensionPixelSize(com.android.systemui.R.dimen.battery_bar_height);
-
-        mLowColor = res.getColor(R.color.holo_red_light);
-        mHighColor = res.getColor(R.color.holo_blue_light);
-        mPaint.setColor(mHighColor);
-
-        mGradientColors = new int[2];
-        mGradientColors[0] = mLowColor;
-        mGradientColors[1] = mHighColor;
-
-        mBarGradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, mGradientColors);
+        mBarGradient = new GradientDrawable();
+        mBarGradient.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
     }
 
     protected int getLevel() {
@@ -198,16 +197,8 @@ public class BatteryBar extends View {
         return mBatteryStatus;
     }
 
-    protected boolean isBatteryPlugged() {
-        return mBatteryPlugged;
-    }
-
     protected boolean isBatteryPresent() {
         return true;
-    }
-
-    private boolean isBatteryStatusUnknown() {
-        return getBatteryStatus() == BatteryManager.BATTERY_STATUS_UNKNOWN;
     }
 
     private boolean isBatteryStatusCharging() {
@@ -216,7 +207,6 @@ public class BatteryBar extends View {
 
     protected void onBatteryStatusChange(Intent intent) {
         mLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-        mBatteryPlugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0;
         mBatteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
                                             BatteryManager.BATTERY_STATUS_UNKNOWN);
     }
