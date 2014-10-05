@@ -324,8 +324,6 @@ public class InputMethodService extends AbstractInputMethodService {
     int mStatusIcon;
     int mBackDisposition;
 
-    private Object mServiceAquireLock = new Object();
-
     private IEdgeGestureService mEdgeGestureService;
 
     boolean mForcedAutoRotate;
