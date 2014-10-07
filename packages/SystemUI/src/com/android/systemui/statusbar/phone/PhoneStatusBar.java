@@ -3502,8 +3502,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mWindowManager.updateViewLayout(mAppSidebar, getAppSidebarLayoutParams(sidebarPosition));
         }
 
-        updateCustomHeaderStatus();
-
         mHeadsUpNotificationDecay = Settings.System.getInt(
                     resolver, Settings.System.HEADS_UP_TIMEOUT,
                     mContext.getResources().getInteger(R.integer.heads_up_notification_decay));
