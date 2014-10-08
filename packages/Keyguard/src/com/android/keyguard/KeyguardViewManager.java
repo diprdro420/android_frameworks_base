@@ -283,10 +283,6 @@ public class KeyguardViewManager {
                     | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR
                     | WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN;
 
-            if (!isSeeThroughEnabled()) {
-                flags |= WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
-            }
-
             if (!mNeedsInput) {
                 flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
             }
