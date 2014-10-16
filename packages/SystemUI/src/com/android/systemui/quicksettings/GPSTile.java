@@ -52,11 +52,9 @@ public class GPSTile extends QuickSettingsTile implements LocationSettingsChange
             public void onClick(View v) {
                 toggleState();
                 updateResources();
-                changeLocationMode();
                 if (isFlipTilesEnabled()) {
                     flipTile(0);
                 }
-                changeLocationMode();
             }
         };
         mOnLongClick = new View.OnLongClickListener() {
