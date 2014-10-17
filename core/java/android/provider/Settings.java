@@ -4111,6 +4111,13 @@ public final class Settings {
         public static final String GESTURES_LEFT_SWIPE = "gestures_left_swipe";
 
         /**
+        * Whether to enable ticker animation
+        *
+        * @hide
+        */
+       public static final String TICKER_ENABLED = "ticker_enabled";
+
+        /**
          * Right Swipe Action
          *
          * @hide
