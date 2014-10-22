@@ -130,22 +130,10 @@ public class KeyguardViewMediator {
     private static final int SET_HIDDEN = 12;
     private static final int KEYGUARD_TIMEOUT = 13;
     private static final int SHOW_ASSISTANT = 14;
-<<<<<<< HEAD
-    private static final int DISPATCH_CAMERA_EVENT = 15;
-    private static final int DISPATCH_APPLICATION_WIDGET_EVENT = 16;
-    private static final int LAUNCH_CAMERA = 17;
-    private static final int LAUNCH_APPLICATION_WIDGET = 18;
-    private static final int DISMISS = 19;
-||||||| merged common ancestors
-    private static final int DISPATCH_EVENT = 15;
-    private static final int LAUNCH_CAMERA = 16;
-    private static final int DISMISS = 17;
-=======
     private static final int DISPATCH_EVENT = 15;
     private static final int LAUNCH_CAMERA = 16;
     private static final int DISMISS = 17;
     private static final int DISPATCH_BUTTON_CLICK_EVENT = 18;
->>>>>>> Add "show all notifications" navbar button
 
     /**
      * The default amount of time we stay awake (used for all key input)
@@ -1152,20 +1140,14 @@ public class KeyguardViewMediator {
                 case SHOW_ASSISTANT:
                     handleShowAssistant();
                     break;
-                case DISPATCH_CAMERA_EVENT:
-                    handleDispatchCameraEvent((MotionEvent) msg.obj);
-                    break;
-                case DISPATCH_APPLICATION_WIDGET_EVENT:
-                    handleDispatchApplicationWidgetEvent((MotionEvent) msg.obj);
+                case DISPATCH_EVENT:
+                    handleDispatchEvent((MotionEvent) msg.obj);
                     break;
                 case DISPATCH_BUTTON_CLICK_EVENT:
                     handleDispatchButtonClickEvent(msg.arg1);
                     break;
                 case LAUNCH_CAMERA:
                     handleLaunchCamera();
-                    break;
-                case LAUNCH_APPLICATION_WIDGET:
-                    handleLaunchApplicationWidget();
                     break;
                 case DISMISS:
                     handleDismiss();
@@ -1210,16 +1192,8 @@ public class KeyguardViewMediator {
         mKeyguardViewManager.launchCamera();
     }
 
-    protected void handleLaunchApplicationWidget() {
-        mKeyguardViewManager.launchApplicationWidget();
-    }
-
-    protected void handleDispatchCameraEvent(MotionEvent event) {
-        mKeyguardViewManager.dispatchCameraEvent(event);
-    }
-
-    protected void handleDispatchApplicationWidgetEvent(MotionEvent event) {
-        mKeyguardViewManager.dispatchApplicationWidgetEvent(event);
+    protected void handleDispatchEvent(MotionEvent event) {
+        mKeyguardViewManager.dispatch(event);
     }
 
     protected void handleDispatchButtonClickEvent(int buttonId) {
@@ -1469,34 +1443,19 @@ public class KeyguardViewMediator {
         return sMultiUserAvatarCache;
     }
 
-    public void dispatchCameraEvent(MotionEvent event) {
-        Message msg = mHandler.obtainMessage(DISPATCH_CAMERA_EVENT, event);
+    public void dispatch(MotionEvent event) {
+        Message msg = mHandler.obtainMessage(DISPATCH_EVENT, event);
         mHandler.sendMessage(msg);
     }
 
-<<<<<<< HEAD
-    public void dispatchApplicationWidgetEvent(MotionEvent event) {
-        Message msg = mHandler.obtainMessage(DISPATCH_APPLICATION_WIDGET_EVENT, event);
-        mHandler.sendMessage(msg);
-    }
-
-
-||||||| merged common ancestors
-=======
     public void dispatchButtonClick(int buttonId) {
         Message msg = mHandler.obtainMessage(DISPATCH_BUTTON_CLICK_EVENT);
         msg.arg1 = buttonId;
         mHandler.sendMessage(msg);
     }
 
->>>>>>> Add "show all notifications" navbar button
     public void launchCamera() {
         Message msg = mHandler.obtainMessage(LAUNCH_CAMERA);
-        mHandler.sendMessage(msg);
-    }
-
-    public void launchApplicationWidget() {
-        Message msg = mHandler.obtainMessage(LAUNCH_APPLICATION_WIDGET);
         mHandler.sendMessage(msg);
     }
 

@@ -100,27 +100,10 @@ public class KeyguardTouchDelegate {
         return false;
     }
 
-    public boolean dispatchCameraEvent(MotionEvent event) {
+    public boolean dispatch(MotionEvent event) {
         final IKeyguardService service = mService;
         if (service != null) {
             try {
-                service.dispatchCameraEvent(event);
-                return true;
-            } catch (RemoteException e) {
-                // What to do?
-                Slog.e(TAG, "RemoteException sending event to keyguard!", e);
-            }
-        } else {
-            Slog.w(TAG, "dispatch(event): NO SERVICE!");
-        }
-        return false;
-    }
-
-    public boolean dispatchApplicationWidgetEvent(MotionEvent event) {
-        final IKeyguardService service = mService;
-        if (service != null) {
-            try {
-                service.dispatchApplicationWidgetEvent(event);
                 Slog.e(TAG, "dispatch!");
                 service.dispatch(event);
                 return true;
@@ -202,20 +185,6 @@ public class KeyguardTouchDelegate {
             }
         } else {
             Slog.w(TAG, "launchCamera(): NO SERVICE!");
-        }
-    }
-
-    public void launchApplicationWidget() {
-        final IKeyguardService service = mService;
-        if (service != null) {
-            try {
-                service.launchApplicationWidget();
-            } catch (RemoteException e) {
-                // What to do?
-                Slog.e(TAG, "RemoteException launching ApplicationWidget!", e);
-            }
-        } else {
-            Slog.w(TAG, "launchApplicationWidget(): NO SERVICE!");
         }
     }
 
