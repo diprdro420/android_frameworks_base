@@ -201,28 +201,15 @@ public class KeyguardServiceWrapper implements IKeyguardService {
         // Not used by PhoneWindowManager
     }
 
-    public void dispatchCameraEvent(MotionEvent event) {
+    public void dispatch(MotionEvent event) {
         // Not used by PhoneWindowManager.  See code in {@link NavigationBarView}
     }
 
-<<<<<<< HEAD
-    public void dispatchApplicationWidgetEvent(MotionEvent event) {
-        // Not used by PhoneWindowManager.  See code in {@link NavigationBarView}
-    }
-
-
-||||||| merged common ancestors
-=======
     public void dispatchButtonClick(int buttonId) {
         // Not used by PhoneWindowManager.  See code in {@link NavigationBarView}
     }
 
->>>>>>> Add "show all notifications" navbar button
     public void launchCamera() {
-        // Not used by PhoneWindowManager.  See code in {@link NavigationBarView}
-    }
-
-    public void launchApplicationWidget() {
         // Not used by PhoneWindowManager.  See code in {@link NavigationBarView}
     }
 
