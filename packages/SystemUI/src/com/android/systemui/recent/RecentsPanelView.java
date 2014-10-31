@@ -538,22 +538,6 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                 }
             });
         }
-        mProtectedApps = (ImageView) findViewById(R.id.protected_apps);
-        if (mProtectedApps != null){
-            mProtectedApps.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                    // Launch protected components
-                    Intent intent = new Intent();
-                    intent.setClassName(ANDROID_SETTINGS, ANDROID_PROTECTED_APPS);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                    mContext.startActivityAsUser(intent, null,
-                        new UserHandle(UserHandle.USER_CURRENT));
-                }
-            });
-        }
 
         if (mRecentsScrim != null) {
             mHighEndGfx = ActivityManager.isHighEndGfx();
