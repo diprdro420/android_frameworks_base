@@ -838,6 +838,8 @@ public class AudioService extends IAudioService.Stub {
 
             updateRingerModeAffectedStreams();
             readDockAudioSettings(cr);
+            mVolumeKeysControlRingStream = Settings.System.getIntForUser(cr,
+					Settings.System.VOLUME_KEYS_CONTROL_RING_STREAM, 1, UserHandle.USER_CURRENT) == 1;
             updateManualSafeMediaVolume();
         }
 
@@ -3928,6 +3930,8 @@ public class AudioService extends IAudioService.Stub {
                 Settings.System.VOLUME_LINK_NOTIFICATION), false, this);
             mContentResolver.registerContentObserver(Settings.System.getUriFor(
                 Settings.System.SAFE_HEADSET_VOLUME), false, this);
+            mContentResolver.registerContentObserver(Settings.System.getUriFor(
+				Settings.System.VOLUME_KEYS_CONTROL_RING_STREAM), false, this);
             mContentResolver.registerContentObserver(Settings.System.getUriFor(
                 Settings.System.MANUAL_SAFE_MEDIA_VOLUME), false, this);
         }
