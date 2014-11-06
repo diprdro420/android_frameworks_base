@@ -3578,12 +3578,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
-        
-        /**
-		 * Alternative recent apps integration using OmniSwitch
-		 * @hide
-		 */
-		public static final String RECENTS_USE_OMNISWITCH = "recents_use_omniswitch";
 
         /**
          * Custom System Animations

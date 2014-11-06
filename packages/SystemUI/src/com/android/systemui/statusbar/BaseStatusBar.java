@@ -88,7 +88,6 @@ import android.widget.TextView;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusBarIconList;
-import com.android.internal.util.cm.OmniSwitchConstants;
 import com.android.systemui.statusbar.phone.Ticker;
 import com.android.internal.util.cm.SpamFilter;
 import com.android.internal.util.cm.SpamFilter.SpamContract.NotificationTable;
@@ -114,8 +113,6 @@ import com.android.systemui.statusbar.view.PieStatusPanel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.HashMap;
 
 public abstract class BaseStatusBar extends SystemUI implements
         CommandQueue.Callbacks {
@@ -936,18 +933,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
     };
 
-    private boolean isOmniSwitchEnabled() {
-		int settingsValue = Settings.System.getIntForUser(
-				mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 0
-				, UserHandle.USER_CURRENT);
-		return (settingsValue == 1);
-	}
-    
     protected void toggleRecentsActivity() {
-		if (isOmniSwitchEnabled()){
-			Intent showIntent = new Intent(OmniSwitchConstants.ACTION_TOGGLE_OVERLAY);
-			mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
-		} else {
         if (mCustomRecent) {
             if (slimRecents != null)
                 slimRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
@@ -955,46 +941,36 @@ public abstract class BaseStatusBar extends SystemUI implements
             if (stockRecents != null)
                 stockRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView(),
                         mExpandedDesktopStyle);
-			}
         }
     }
 
     protected void preloadRecentTasksList() {
-		if (!isOmniSwitchEnabled()) {
         if (mCustomRecent) {
             if (slimRecents != null)
                 slimRecents.preloadRecentTasksList();
         } else {
             if (stockRecents != null)
                 stockRecents.preloadRecentTasksList();
-            }
         }
     }
 
     protected void cancelPreloadingRecentTasksList() {
-		if (!isOmniSwitchEnabled()) {
         if (mCustomRecent) {
             if (slimRecents != null)
                 slimRecents.cancelPreloadingRecentTasksList();
         } else {
             if (stockRecents != null)
                 stockRecents.cancelPreloadingRecentTasksList();
-            }
         }
     }
 
     protected void closeRecents() {
-		if (isOmniSwitchEnabled()){
-			Intent hideIntent = new Intent(OmniSwitchConstants.ACTION_HIDE_OVERLAY);
-			mContext.sendBroadcastAsUser(hideIntent, UserHandle.CURRENT);
-		} else {
         if (mCustomRecent) {
             if (slimRecents != null)
                 slimRecents.closeRecents();
         } else {
             if (stockRecents != null)
                 stockRecents.closeRecents();
-            }
         }
     }
 
