@@ -2144,29 +2144,6 @@ public final class Settings {
             "notifications_use_ring_volume";
 
         /**
-         * Volume Overlay Mode, This is behaviour of the volume overlay panel
-         * Defaults to 1 - which is expandable
-         * @hide
-         */
-        public static final String MODE_VOLUME_OVERLAY = "mode_volume_overlay";
-
-        /** @hide */
-        public static final int VOLUME_OVERLAY_SINGLE = 0;
-        /** @hide */
-        public static final int VOLUME_OVERLAY_EXPANDABLE = 1;
-        /** @hide */
-        public static final int VOLUME_OVERLAY_EXPANDED = 2;
-        /** @hide */
-        public static final int VOLUME_OVERLAY_NONE = 3;
-
-        /**
-         * Volume panel background color
-         *
-         * @hide
-         */
-        public static final String VOLUME_PANEL_BG_COLOR = "volume_panel_bg_color";
-
-        /**
          * Whether the blacklisting feature for phone calls is enabled
          * @hide
          */
