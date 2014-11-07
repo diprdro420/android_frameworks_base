@@ -314,7 +314,6 @@ public class QuickSettingsController {
                 qs = new OnTheGoTile(mContext, this);
             } else if (tile.equals(TILE_APPCIRCLEBAR)) {
                 qs = new AppcirclebarTile(mContext, this);
-                }
             }
 
             if (qs != null) {

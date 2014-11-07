@@ -28,13 +28,17 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageDataObserver;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.content.ServiceConnection;
+import android.database.ContentObserver;
 import android.content.res.Resources;
 import android.content.res.ThemeConfig;
 import android.database.ContentObserver;
@@ -56,6 +60,7 @@ import com.android.systemui.chaos.lab.gestureanywhere.GestureAnywhereView;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.Process;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
@@ -85,6 +90,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RemoteViews;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
@@ -154,7 +160,7 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected CommandQueue mCommandQueue;
     protected INotificationManager mNotificationManager;
-    protected IStatusBarService mBarService;
+    public IStatusBarService mBarService;
     protected H mHandler = createHandler();
 
     // all notifications
@@ -1226,7 +1232,6 @@ public abstract class BaseStatusBar extends SystemUI implements
             } catch (RemoteException e) {
             }
 
-            if (mIntent != null) {
             int flags = Intent.FLAG_FLOATING_WINDOW | Intent.FLAG_ACTIVITY_CLEAR_TASK;
             boolean allowed = true; // default on, except for preloaded false
             try {
@@ -1680,12 +1685,6 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected boolean shouldInterrupt(StatusBarNotification sbn) {
         Notification notification = sbn.getNotification();
-
-        // check if notification from the package is blacklisted first
-        if (isPackageBlacklisted(sbn.getPackageName())) {
-            return false;
-        }
-
         // some predicates to make the boolean logic legible
         boolean isNoisy = (notification.defaults & Notification.DEFAULT_SOUND) != 0
                 || (notification.defaults & Notification.DEFAULT_VIBRATE) != 0
